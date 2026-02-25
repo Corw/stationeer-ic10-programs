@@ -18,6 +18,16 @@
       "envFile": "${workspaceFolder}/.env",
       "justMyCode": true
     },
+    {
+      "name": "Python: Run create_empty_config.py",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/tools/create_empty_config.py",
+      "console": "integratedTerminal",
+      "envFile": "${workspaceFolder}/.env",
+      "justMyCode": true
+    }
+
     
   ]
 }
