@@ -41,7 +41,7 @@ def store_script_source(script_source: str, path_cm10_code: str):
 
 def main():
     # get all script directories from settings configured directory
-    script_directories = get_scripts(path=settings.scripts_dir)
+    script_directories = get_scripts(path=settings.config.path_scripts)
     # for each script directory check config if it is already there, if not add it to the config
     new_scripts = [
         script
