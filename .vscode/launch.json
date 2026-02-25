@@ -8,6 +8,16 @@
       "program": "${file}",
       "stopOnEntry": true,
       "trace": false
-    }
+    },
+    {
+      "name": "Python: Run import.py",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/tools/import.py",
+      "console": "integratedTerminal",
+      "envFile": "${workspaceFolder}/.env",
+      "justMyCode": true
+    },
+    
   ]
 }
