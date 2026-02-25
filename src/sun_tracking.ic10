@@ -1,0 +1,22 @@
+define Panels -539224550
+alias Sensor d0
+
+alias Hor r14
+alias Vert r15
+
+define OffHor 180
+define OffVert 90
+
+Start:
+yield
+l Hor Sensor Horizontal
+l Vert Sensor Vertical
+
+add r0 Hor OffHor
+add r1 Vert OffVert
+end:
+
+
+sb Panels Horizontal r0
+sb Panels Vertical r1
+j Start

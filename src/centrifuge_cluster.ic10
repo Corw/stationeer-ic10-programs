@@ -1,0 +1,48 @@
+alias isError r1
+alias reagents r2
+alias isFull r3
+alias openState r4
+alias i r5
+alias overMax r6
+alias lineJump r7
+alias max r8
+
+# init
+move i -1
+move max 4
+
+start:
+yield
+
+add i i 1
+sgt overMax i max
+select i overMax 0 i
+
+mul lineJump i 2
+add lineJump lineJump 1
+jr lineJump
+alias centrifuge d0
+j operate
+alias centrifuge d1
+j operate
+alias centrifuge d2
+j operate
+alias centrifuge d3
+j operate
+alias centrifuge d4
+j operate
+alias centrifuge d5
+j operate
+
+operate:
+bdns centrifuge start
+
+l isError centrifuge Error
+l reagents centrifuge Reagents
+
+sge isFull reagents 3
+
+and openState isFull isError
+s centrifuge Open openState
+
+j start

@@ -1,0 +1,10 @@
+alias filter db
+define limit 10000 # 10 MPa
+
+Start:
+yield
+l r0 filter PressureOutput
+sle r1 r0 limit
+s filter Mode r1
+
+j Start
