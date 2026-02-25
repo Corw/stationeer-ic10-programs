@@ -7,4 +7,6 @@ class ScriptConfig(pydantic.BaseModel):
     script_directory: str
 
 class Config(pydantic.BaseModel):
+    path_cm10_code: str
+    path_scripts: str
     scripts_configs: list[ScriptConfig]
