@@ -4,19 +4,21 @@ from models import ScriptContent
 from xml.etree import ElementTree
 
 
-def get_scripts(path: str)-> list[str]:
+def get_scripts(path: str) -> list[str]:
     """Returns a list of all directories in the given path."""
-    return [item for item in os.listdir(path) if os.path.isdir(os.path.join(path, item))]
+    return [
+        item for item in os.listdir(path) if os.path.isdir(os.path.join(path, item))
+    ]
+
 
 def get_script_content(script: str, path_scripts: str) -> ScriptContent:
     """Imports a script.
-    
+
     Add script to a config, extract cm10 code from the file and creates a cm10 code file.
     """
     script_path = os.path.join(path_scripts, script, "instruction.xml")
     if not os.path.exists(script_path):
         raise ValueError(f"Script {script} does not have an instruction.xml file.")
-
 
     # script is and xml file, we need to extract followingbelements:
     # InstructionData/Title
@@ -32,19 +34,26 @@ def get_script_content(script: str, path_scripts: str) -> ScriptContent:
     return result
 
 
-
-
 def main():
     # get all script directories from settings configured directory
     script_directories = get_scripts(path=settings.scripts_dir)
     # for each script directory check config if it is already there, if not add it to the config
     new_scripts = [
-        script for script in script_directories if script not in [script_config.script_directory for script_config in settings.config.scripts_configs]
+        script
+        for script in script_directories
+        if script
+        not in [
+            script_config.script_directory
+            for script_config in settings.config.scripts_configs
+        ]
     ]
 
     print(f"Found {len(new_scripts)} new scripts: {new_scripts}")
 
-    for new_script in new_scripts:
+    scripts_content = [
         get_script_content(script=new_script, path_scripts=settings.config.path_scripts)
+        for new_script in new_scripts
+    ]
+
 
 main()
