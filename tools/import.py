@@ -1,7 +1,8 @@
 import os
 import settings
-from models import ScriptContent
+from models import ScriptContent, ScriptConfig
 from xml.etree import ElementTree
+
 
 
 def get_scripts(path: str) -> list[str]:
@@ -27,7 +28,7 @@ def get_script_content(script: str, path_scripts: str) -> ScriptContent:
     tree = ElementTree.parse(source=script_path)
     root = tree.getroot()
     title = root.find("Title").text
-    description = root.find("Description").text
+    description = root.find("Description").text.replace("\u200b", "")
     instructions = root.find("Instructions").text
 
     result = ScriptContent(name=title, description=description, source_code=instructions)
@@ -54,17 +55,25 @@ def main():
 
     print(f"Found {len(new_scripts)} new scripts: {new_scripts}")
 
-    scripts_content = [
-        get_script_content(script=new_script, path_scripts=settings.config.path_scripts)
-        for new_script in new_scripts
-    ]
-
     # store script code to code file and config
-    for script_content in scripts_content:
+    for new_script in new_scripts:
+        script_content = get_script_content(script=new_script, path_scripts=settings.config.path_scripts)
+
         script_source_file = f"{script_content.name.lower().replace(' ', '_')}.ic10"
         script_source_path = os.path.join(settings.config.path_cm10_code, script_source_file)
 
         store_script_source(script_source=script_content.source_code, path_cm10_code=script_source_path)
+
+        settings.config.scripts_configs.append(
+            ScriptConfig(
+                name=script_content.name,
+                description=script_content.description,
+                src_file=script_source_file,
+                script_directory=new_script,
+            )
+        )
+    
+    settings.save_config()
 
 
 main()
