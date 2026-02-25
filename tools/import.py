@@ -1,10 +1,38 @@
 import os
 import settings
+from models import ScriptContent
+from xml.etree import ElementTree
 
 
 def get_scripts(path: str)-> list[str]:
     """Returns a list of all directories in the given path."""
     return [item for item in os.listdir(path) if os.path.isdir(os.path.join(path, item))]
+
+def get_script_content(script: str, path_scripts: str) -> ScriptContent:
+    """Imports a script.
+    
+    Add script to a config, extract cm10 code from the file and creates a cm10 code file.
+    """
+    script_path = os.path.join(path_scripts, script, "instruction.xml")
+    if not os.path.exists(script_path):
+        raise ValueError(f"Script {script} does not have an instruction.xml file.")
+
+
+    # script is and xml file, we need to extract followingbelements:
+    # InstructionData/Title
+    # InstructionData/Description
+    # InstructionData/Instructions
+    tree = ElementTree.parse(source=script_path)
+    root = tree.getroot()
+    title = root.find("Title").text
+    description = root.find("Description").text
+    instructions = root.find("Instructions").text
+
+    result = ScriptContent(name=title, description=description, content=instructions)
+    return result
+
+
+
 
 def main():
     # get all script directories from settings configured directory
@@ -15,5 +43,8 @@ def main():
     ]
 
     print(f"Found {len(new_scripts)} new scripts: {new_scripts}")
+
+    for new_script in new_scripts:
+        get_script_content(script=new_script, path_scripts=settings.config.path_scripts)
 
 main()
