@@ -1,5 +1,24 @@
 {
     "path_cm10_code": "/home/mfrana/repos/stationeer/src/",
     "path_scripts": "/home/mfrana/Data/SteamLibrary/steamapps/compatdata/544550/pfx/drive_c/users/steamuser/Documents/My Games/Stationeers/scripts/",
-    "scripts_configs": []
+    "scripts_configs": [
+        {
+            "name": "Centrifuge cluster",
+            "description": "Control array of centrifuges",
+            "src_file": "centrifuge_cluster.ic10",
+            "script_directory": "Centrifuge cluster"
+        },
+        {
+            "name": "Sun tracking",
+            "description": "",
+            "src_file": "sun_tracking.ic10",
+            "script_directory": "Sun tracking"
+        },
+        {
+            "name": "Tank filler",
+            "description": "",
+            "src_file": "tank_filler.ic10",
+            "script_directory": "Tank filler"
+        }
+    ]
 }
