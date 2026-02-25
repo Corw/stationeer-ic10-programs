@@ -30,9 +30,13 @@ def get_script_content(script: str, path_scripts: str) -> ScriptContent:
     description = root.find("Description").text
     instructions = root.find("Instructions").text
 
-    result = ScriptContent(name=title, description=description, content=instructions)
+    result = ScriptContent(name=title, description=description, source_code=instructions)
     return result
 
+def store_script_source(script_source: str, path_cm10_code: str):
+    """Stores the source code of a script to a file."""
+    with open(path_cm10_code, "w") as f:
+        f.write(script_source)
 
 def main():
     # get all script directories from settings configured directory
@@ -54,6 +58,13 @@ def main():
         get_script_content(script=new_script, path_scripts=settings.config.path_scripts)
         for new_script in new_scripts
     ]
+
+    # store script code to code file and config
+    for script_content in scripts_content:
+        script_source_file = f"{script_content.name.lower().replace(' ', '_')}.ic10"
+        script_source_path = os.path.join(settings.config.path_cm10_code, script_source_file)
+
+        store_script_source(script_source=script_content.source_code, path_cm10_code=script_source_path)
 
 
 main()
