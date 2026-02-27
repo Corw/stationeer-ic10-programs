@@ -78,7 +78,7 @@ def export_script(script_file: str) -> None:
 
     # Convert the script to xml format
     script_path = os.path.join(config.path_cm10_code, script_file)
-    src_code = open(script_path, "r").read()
+    src_code = open(script_path, "r").read().strip()
 
     script_content = ScriptContent(
         name=script_config.name,
