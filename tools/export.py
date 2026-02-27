@@ -8,6 +8,7 @@ from models.config import ScriptConfig
 from models.scripts import ScriptContent
 
 from datetime import datetime, timezone
+from xml.sax.saxutils import escape
 
 
 def current_ticks():
@@ -16,20 +17,28 @@ def current_ticks():
 
 
 def convert_to_xml(content: ScriptContent) -> str:
-    """Converts the src content to xml format."""
-    result = (
-        f'<?xml version="1.0" encoding="utf-8"?>"'
-        f'<InstructionData xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
-        f"<DateTime>{current_ticks()}</DateTime>"
-        f"<GameVersion>0.2.5954.26176</GameVersion>"
-        f"<Title>{content.name}</Title>"
-        f"<Description>{content.description}</Description>"
-        f"<Author>Corw</Author>"
-        f"<WorkshopFileHandle>0</WorkshopFileHandle>"
-        f"<Instructions>{content.source_code}</InstructionData>"
-    )
+    """Convert a :class:`ScriptContent` to the expected XML string."""
 
-    return result
+    dticks = current_ticks()
+    title = escape(content.name)
+    description = escape(content.description)
+    instructions = escape(content.source_code)
+
+    lines = [
+        '<?xml version="1.0" encoding="utf-8"?>',
+        '<InstructionData xmlns:xsd="http://www.w3.org/2001/XMLSchema" '
+        'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">',
+        f"  <DateTime>{dticks}</DateTime>",
+        "  <GameVersion>0.2.5954.26176</GameVersion>",
+        f"  <Title>{title}</Title>",
+        f"  <Description>{description}</Description>",
+        "  <Author>Corw</Author>",
+        "  <WorkshopFileHandle>0</WorkshopFileHandle>",
+        f"  <Instructions>{instructions}</Instructions>",
+        "</InstructionData>",
+    ]
+
+    return "\n".join(lines)
 
 
 def set_script_content(script: str, path_scripts: str, content: ScriptContent) -> None:
