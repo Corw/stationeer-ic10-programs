@@ -26,8 +26,15 @@
       "console": "integratedTerminal",
       "envFile": "${workspaceFolder}/.env",
       "justMyCode": true
-    }
-
-    
+    },
+    {
+      "name": "Python: Run export.py",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/tools/export.py",
+      "console": "integratedTerminal",
+      "envFile": "${workspaceFolder}/.env",
+      "justMyCode": true
+    }    
   ]
 }
