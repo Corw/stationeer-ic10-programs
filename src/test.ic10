@@ -4,6 +4,3 @@ alias vertical r0
 l vertical dish Vertical
 add vertical vertical 1
 s dish Vertical vertical
-
-
-

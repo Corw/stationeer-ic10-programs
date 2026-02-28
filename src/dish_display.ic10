@@ -1,0 +1,29 @@
+alias dish r0
+alias buffer r1
+
+define Degrees 16
+
+# device types
+define switch 1773255945
+define displaySmall -2041948072
+
+# devices 
+define selector HASH("Selector Switch")
+define displayHorizontalActual HASH("Horizontal Actual")
+define displayVerticalActual HASH("Vertical Actual")
+
+
+# set display modes to degrees
+sbn displaySmall displayHorizontalActual Mode Degrees
+sbn displaySmall displayVerticalActual Mode Degrees
+
+Start:
+
+lbn dish switch selector Setting Average
+
+l buffer dr0 Horizontal
+sbn displaySmall displayHorizontalActual Setting buffer
+l buffer dr0 Vertical
+sbn displaySmall displayVerticalActual Setting buffer
+
+j Start

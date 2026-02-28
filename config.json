@@ -19,6 +19,12 @@
             "description": "",
             "src_file": "tank_filler.ic10",
             "script_directory": "Tank filler"
+        },
+        {
+            "name": "Dish display",
+            "description": "Exported script 'dish_display.ic10'",
+            "src_file": "dish_display.ic10",
+            "script_directory": "Dish display"
         }
     ]
 }
