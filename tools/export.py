@@ -62,7 +62,7 @@ def export_script(script_file: str) -> None:
         (
             configuration
             for configuration in settings.config.scripts_configs
-            if configuration.name == script_file
+            if configuration.src_file == script_file
         ),
         None,
     )
