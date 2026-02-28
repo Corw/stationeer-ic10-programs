@@ -3,7 +3,7 @@ scrpts stores in in compatipble format in scripts path."""
 
 import os
 
-from settings import config
+import settings
 from models.config import ScriptConfig
 from models.scripts import ScriptContent
 
@@ -61,13 +61,14 @@ def export_script(script_file: str) -> None:
     script_config = next(
         (
             configuration
-            for configuration in config.scripts_configs
+            for configuration in settings.config.scripts_configs
             if configuration.name == script_file
         ),
         None,
     )
 
     if not script_config:
+        print(f"Script configuration for '{script_file}' not found in config. Using default configuration.")
         name = script_file.capitalize().replace("_", " ").strip(".ic10")
         script_config = ScriptConfig(
             name=name,
@@ -75,9 +76,11 @@ def export_script(script_file: str) -> None:
             src_file=script_file,
             script_directory=name,
         )
+        settings.config.scripts_configs.append(script_config)
 
     # Convert the script to xml format
-    script_path = os.path.join(config.path_cm10_code, script_file)
+    script_path = os.path.join(settings.config.path_cm10_code, script_file)
+    print(f"Reading source code from '{script_path}'...")
     src_code = open(script_path, "r").read().strip()
 
     script_content = ScriptContent(
@@ -87,12 +90,25 @@ def export_script(script_file: str) -> None:
     )
 
     # Store the xml content in the scripts path
+    print(f"Exporting script '{script_config.name}' to '{settings.config.path_scripts}'...")
     set_script_content(
         script=script_config.script_directory,
-        path_scripts=config.path_scripts,
+        path_scripts=settings.config.path_scripts,
         content=script_content,
     )
 
-    print(f"Script '{script_config.name}' exported successfully to '{config.path_scripts}'.")
+    print(f"Script '{script_config.name}' exported successfully to '{settings.config.path_scripts}'.")
 
-export_script(script_file="test.ic10")    
+    print(f"Updating config with script '{script_config.name}'...")
+    settings.save_config()
+
+# export_script(script_file="test.ic10")
+
+# read input from terminal
+if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser(description="Export a script to the scripts path.")
+    parser.add_argument("script_file", type=str, help="The name of the script file to export (e.g. 'test.ic10').")
+    args = parser.parse_args()
+    print(f"Exporting script '{args.script_file}'...")
+    export_script(script_file=args.script_file)
