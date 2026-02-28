@@ -42,7 +42,7 @@ sbn display displayWeather Mode ModeString
 move stateWeather -1
 
 sbn alarm alarmWeather On 1
-sbn alarm alarmWeather Color  Color.Red
+sbn alarm alarmWeather Color Color.Red
 
 
 Start:
