@@ -1,11 +1,10 @@
 alias dish r0
 alias buffer r1
 
-define Degrees 16
-
 # device types
 define switch 1773255945
-define displaySmall -2041948072
+define display2 -2041948072
+define display3 -246585138
 define diode 1311586884
 
 # devices 
@@ -19,10 +18,21 @@ define displayActivate HASH("Activate")
 define displaySetting HASH("Setting")
 define displayRequiredPower HASH("RequiredPower")
 define displayIdle HASH("Idle")
+define displaySignalStrength HASH("SignalStrength")
+define displaySignalId HASH("SignalId")
+define displayInterrogationProgress HASH("InterrogationProgress")
+define displaySizeX HASH("SizeX")
+define displaySizeY HASH("SizeY")
+
+# constants
+define ModeDegrees 16
+define ModeString 10
 
 # set display modes to degrees
-sbn displaySmall displayHorizontalActual Mode Degrees
-sbn displaySmall displayVerticalActual Mode Degrees
+sbn display3 displayHorizontalActual Mode ModeDegrees
+sbn display3 displayVerticalActual Mode ModeDegrees
+sbn display3 displaySignalId Mode ModeString
+
 
 Start:
 s db Setting Start
@@ -31,14 +41,14 @@ yield
 lbn dish switch selector Setting Average
 
 l buffer dr0 Horizontal
-sbn displaySmall displayHorizontalActual Setting buffer
+sbn display2 displayHorizontalActual Setting buffer
 l buffer dr0 Vertical
-sbn displaySmall displayVerticalActual Setting buffer
+sbn display2 displayVerticalActual Setting buffer
 
 l buffer dr0 Idle
 select buffer buffer DiodeOff DiodeBlink
 jal buffer
-jal DebugDiplays
+jal DebugDisplays
 j Start
 
 DiodeOff:
@@ -56,19 +66,29 @@ sbn diode diodeActive Color Color.Red
 j ra
 
 
-DebugDiplays:
-s db Setting DebugDiplays
+DebugDisplays:
+s db Setting DebugDisplays
 
 l buffer dr0 Power
-sbn displaySmall displayPower Setting buffer
+sbn display3 displayPower Setting buffer
 l buffer dr0 Error
-sbn displaySmall displayError Setting buffer
+sbn display3 displayError Setting buffer
 l buffer dr0 Activate
-sbn displaySmall displayActivate Setting buffer
+sbn display3 displayActivate Setting buffer
 l buffer dr0 Setting
-sbn displaySmall displaySetting Setting buffer
+sbn display3 displaySetting Setting buffer
 l buffer dr0 RequiredPower
-sbn displaySmall displayRequiredPower Setting buffer
+sbn display3 displayRequiredPower Setting buffer
 l buffer dr0 Idle
-sbn displaySmall displayIdle Setting buffer
+sbn display3 displayIdle Setting buffer
+l buffer dr0 SignalStrength
+sbn display3 displaySignalStrength Setting buffer
+l buffer dr0 SignalID
+sbn display3 displaySignalId Setting buffer
+l buffer dr0 InterrogationProgress
+sbn display3 displayInterrogationProgress Setting buffer
+l buffer dr0 SizeX
+sbn display3 displaySizeX Setting buffer
+l buffer dr0 SizeZ
+sbn display3 displaySizeY Setting buffer
 j ra
