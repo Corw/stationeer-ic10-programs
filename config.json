@@ -25,6 +25,18 @@
             "description": "Exported script 'dish_display.ic10'",
             "src_file": "dish_display.ic10",
             "script_directory": "Dish display"
+        },
+        {
+            "name": "Dish control",
+            "description": "IC Housing",
+            "src_file": "dish_control.ic10",
+            "script_directory": "Dish control"
+        },
+        {
+            "name": "Test",
+            "description": "Exported script 'test.ic10'",
+            "src_file": "test.ic10",
+            "script_directory": "Test"
         }
     ]
 }

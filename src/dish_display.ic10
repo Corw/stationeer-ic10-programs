@@ -6,18 +6,27 @@ define Degrees 16
 # device types
 define switch 1773255945
 define displaySmall -2041948072
+define diode 1311586884
 
 # devices 
 define selector HASH("Selector Switch")
 define displayHorizontalActual HASH("Horizontal Actual")
 define displayVerticalActual HASH("Vertical Actual")
-
+define diodeActive HASH("Dish Active")
+define displayPower HASH("Power")
+define displayError HASH("Error")
+define displayActivate HASH("Activate")
+define displaySetting HASH("Setting")
+define displayRequiredPower HASH("RequiredPower")
+define displayIdle HASH("Idle")
 
 # set display modes to degrees
 sbn displaySmall displayHorizontalActual Mode Degrees
 sbn displaySmall displayVerticalActual Mode Degrees
 
 Start:
+s db Setting Start
+yield
 
 lbn dish switch selector Setting Average
 
@@ -26,4 +35,40 @@ sbn displaySmall displayHorizontalActual Setting buffer
 l buffer dr0 Vertical
 sbn displaySmall displayVerticalActual Setting buffer
 
+l buffer dr0 Idle
+select buffer buffer DiodeOff DiodeBlink
+jal buffer
+jal DebugDiplays
 j Start
+
+DiodeOff:
+s db Setting DiodeOff
+
+sbn diode diodeActive Color Color.Black
+j ra
+
+DiodeBlink:
+s db Setting DiodeBlink
+lbn buffer diode diodeActive Color Average
+# check if value in buffer is equal to Color.Black
+beq buffer Color.Red DiodeOff
+sbn diode diodeActive Color Color.Red
+j ra
+
+
+DebugDiplays:
+s db Setting DebugDiplays
+
+l buffer dr0 Power
+sbn displaySmall displayPower Setting buffer
+l buffer dr0 Error
+sbn displaySmall displayError Setting buffer
+l buffer dr0 Activate
+sbn displaySmall displayActivate Setting buffer
+l buffer dr0 Setting
+sbn displaySmall displaySetting Setting buffer
+l buffer dr0 RequiredPower
+sbn displaySmall displayRequiredPower Setting buffer
+l buffer dr0 Idle
+sbn displaySmall displayIdle Setting buffer
+j ra

@@ -1,0 +1,67 @@
+alias dish r0
+alias active r1
+alias vertical r2
+alias horizontal r3
+alias increment r4
+alias delta r5
+
+define Degrees 16
+
+# device types
+define switch 1773255945
+define displaySmall -2041948072
+define button 1462769197
+
+# devices 
+define selector HASH("Selector Switch")
+define displayHorizontalRequired HASH("Horizontal Required")
+define displayVerticalRequired HASH("Vertical Required")
+define buttonUp HASH("Button Up")
+define buttonDown HASH("Button Down")
+define buttonLeft HASH("Button Left")
+define buttonRight HASH("Button Right")
+
+# set display modes to degrees
+sbn displaySmall displayHorizontalRequired Mode Degrees
+sbn displaySmall displayVerticalRequired Mode Degrees
+
+# dish selector on initialization
+lbn dish switch selector Setting Average
+# set required to current position on initialization
+l horizontal dr0 Horizontal
+l vertical dr0 Vertical
+
+move increment 10
+
+Start:
+yield
+# todo: handle switching dishes
+lbn dish switch selector Setting Average
+
+# read button for activation
+# increase vertical
+lbn active button buttonUp Activate Average
+select delta active increment 0
+add vertical vertical delta
+# decrease vertical
+lbn active button buttonDown Activate Average
+select delta active increment 0
+sub vertical vertical delta
+# decrease horizontal
+lbn active button buttonLeft Activate Average
+select delta active increment 0
+sub horizontal horizontal delta
+# increase horizontal
+lbn active button buttonRight Activate Average
+select delta active increment 0
+add horizontal horizontal delta
+
+# update displays
+sbn displaySmall displayHorizontalRequired Setting horizontal
+sbn displaySmall displayVerticalRequired Setting vertical
+
+# move dish to required position
+s dr0 Horizontal horizontal
+s dr0 Vertical vertical
+
+j Start
