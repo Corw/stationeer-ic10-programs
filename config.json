@@ -37,6 +37,12 @@
             "description": "Exported script 'test.ic10'",
             "src_file": "test.ic10",
             "script_directory": "Test"
+        },
+        {
+            "name": "Base monitoring",
+            "description": "Exported script 'base_monitoring.ic10'",
+            "src_file": "base_monitoring.ic10",
+            "script_directory": "Base monitoring"
         }
     ]
 }

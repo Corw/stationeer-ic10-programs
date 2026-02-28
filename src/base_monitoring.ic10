@@ -1,0 +1,118 @@
+alias buffer r0
+alias stateWeather r1
+alias weatherFlag r2
+
+# constants
+define ModePercent 1
+define ModeCelzius 4
+define ModePa 14
+define ModeString 10
+
+define Kelvin 273.15
+define NoStorm 0
+define StormIncoming 1
+define InStorm 2
+
+# device types
+define display -246585138
+define gasSensor -1252983604
+define weatherStation 1997212478
+define alarm 1922318669
+define diode 688119132
+
+# devices
+define baseGasSensor HASH("Base Gas Sensor")
+define displayRatioOxygen HASH("RatioOxygen")
+define displayRatioNitrogen HASH("RatioNitrogen")
+define displayRatioCarbonDioxide HASH("RatioCarbonDioxide")
+define displayTemperature HASH("Temperature")
+define displayPressure HASH("Pressure")
+define weatherBase HASH("Weather Station")
+define displayWeather HASH("WeatherDisplay")
+define alarmWeather HASH("WeatherAlarm")
+define diodeWeather HASH("WeatherDiode")
+
+sbn display displayRatioOxygen Mode ModePercent
+sbn display displayRatioNitrogen Mode ModePercent
+sbn display displayRatioCarbonDioxide Mode ModePercent
+sbn display displayTemperature Mode ModeCelzius
+sbn display displayPressure Mode ModePa
+sbn display displayWeather Mode ModeString
+
+move stateWeather -1
+
+sbn alarm alarmWeather On 1
+sbn alarm alarmWeather Color  Color.Red
+
+
+Start:
+yield
+
+lbn buffer gasSensor baseGasSensor RatioOxygen Average
+sbn display displayRatioOxygen Setting buffer
+
+lbn buffer gasSensor baseGasSensor RatioNitrogen Average
+sbn display displayRatioNitrogen Setting buffer
+
+lbn buffer gasSensor baseGasSensor RatioCarbonDioxide Average
+sbn display displayRatioCarbonDioxide Setting buffer
+
+lbn buffer gasSensor baseGasSensor Temperature Average
+sub buffer buffer Kelvin 
+sbn display displayTemperature Setting buffer
+
+lbn buffer gasSensor baseGasSensor Pressure Average
+sbn display displayPressure Setting buffer
+
+lbn buffer weatherStation weatherBase Mode Average
+# if buffer is not equal to stateWeather, update stateWeather and set alarm
+bne buffer stateWeather WeatherChanged
+beq stateWeather StormIncoming StormIncomingUpdate
+
+j Start
+
+WeatherChanged:
+move stateWeather buffer
+beq stateWeather NoStorm WeatherStormEnd
+beq stateWeather StormIncoming WeatherStormIncoming
+beq stateWeather InStorm WeatherStormStart
+
+WeatherStormEnd:
+sbn display displayWeather Setting STR("Clear")
+sbn display displayWeather Color Color.Green
+
+sbn diode diodeWeather Color Color.Gray
+sbn diode diodeWeather On 0
+
+sbn alarm alarmWeather On 0
+j Start
+
+WeatherStormIncoming:
+lbn buffer weatherStation weatherBase NextWeatherEventTime Average
+
+sbn display displayWeather Setting buffer
+sbn display displayWeather Color Color.Red
+
+sbn diode diodeWeather Color Color.Yellow
+sbn diode diodeWeather On 1
+
+sbn alarm alarmWeather On 1
+
+j Start
+
+WeatherStormStart:
+sbn display displayWeather Setting STR("Storm!")
+sbn display displayWeather Color Color.Yellow
+j Start
+
+StormIncomingUpdate:
+lbn buffer weatherStation weatherBase NextWeatherEventTime Average
+sbn display displayWeather Setting buffer
+
+div weatherFlag buffer 2
+abs weatherFlag weatherFlag
+
+select buffer weatherFlag Color.White Color.Yellow
+sbn diode diodeWeather Color buffer
+
+j Start
