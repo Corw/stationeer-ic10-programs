@@ -14,6 +14,8 @@ define gasSensor -1252983604
 define weatherStation 1997212478
 define alarm 1922318669
 define diode 688119132
+define gauge -1252835556
+define daylightSensor 1076425094
 
 # devices
 define baseGasSensor HASH("Base Gas Sensor")
