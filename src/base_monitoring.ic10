@@ -3,11 +3,6 @@ alias stateWeather r1
 alias weatherFlag r2
 
 # constants
-define ModePercent 1
-define ModeCelzius 4
-define ModePa 14
-define ModeString 10
-
 define Kelvin 273.15
 define NoStorm 0
 define StormIncoming 1
@@ -32,18 +27,14 @@ define displayWeather HASH("WeatherDisplay")
 define alarmWeather HASH("WeatherAlarm")
 define diodeWeather HASH("WeatherDiode")
 
-sbn display displayRatioOxygen Mode ModePercent
-sbn display displayRatioNitrogen Mode ModePercent
-sbn display displayRatioCarbonDioxide Mode ModePercent
-sbn display displayTemperature Mode ModeCelzius
-sbn display displayPressure Mode ModePa
-sbn display displayWeather Mode ModeString
+sbn display displayRatioOxygen Mode DisplayMode.Percent
+sbn display displayRatioNitrogen Mode DisplayMode.Percent
+sbn display displayRatioCarbonDioxide Mode DisplayMode.Percent
+sbn display displayTemperature Mode DisplayMode.Celsius
+sbn display displayPressure Mode DisplayMode.Pa
 
 move stateWeather -1
-
-sbn alarm alarmWeather On 1
 sbn alarm alarmWeather Color Color.Red
-
 
 Start:
 yield
@@ -78,39 +69,36 @@ beq stateWeather StormIncoming WeatherStormIncoming
 beq stateWeather InStorm WeatherStormStart
 
 WeatherStormEnd:
+sbn display displayWeather Mode DisplayMode.String
 sbn display displayWeather Setting STR("Clear")
 sbn display displayWeather Color Color.Green
 
 sbn diode diodeWeather Color Color.Gray
 sbn diode diodeWeather On 0
-
 sbn alarm alarmWeather On 0
 j Start
 
 WeatherStormIncoming:
-lbn buffer weatherStation weatherBase NextWeatherEventTime Average
-
-sbn display displayWeather Setting buffer
+sbn display displayWeather Mode DisplayMode.Minutes
 sbn display displayWeather Color Color.Red
-
-sbn diode diodeWeather Color Color.Yellow
 sbn diode diodeWeather On 1
-
 sbn alarm alarmWeather On 1
-
-j Start
+j StormIncomingUpdate
 
 WeatherStormStart:
+sbn display displayWeather Mode DisplayMode.String
 sbn display displayWeather Setting STR("Storm!")
 sbn display displayWeather Color Color.Yellow
 j Start
 
 StormIncomingUpdate:
 lbn buffer weatherStation weatherBase NextWeatherEventTime Average
-sbn display displayWeather Setting buffer
+mod weatherFlag buffer 2
+floor weatherFlag weatherFlag
 
-div weatherFlag buffer 2
-abs weatherFlag weatherFlag
+div buffer buffer 60
+floor buffer buffer
+sbn display displayWeather Setting buffer
 
 select buffer weatherFlag Color.White Color.Yellow
 sbn diode diodeWeather Color buffer
