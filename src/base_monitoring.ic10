@@ -89,6 +89,7 @@ WeatherStormStart:
 sbn display displayWeather Mode DisplayMode.String
 sbn display displayWeather Setting STR("Storm!")
 sbn display displayWeather Color Color.Yellow
+sbn diode diodeWeather Color Color.Yellow
 j Start
 
 StormIncomingUpdate:
