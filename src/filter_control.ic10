@@ -15,6 +15,6 @@ sgt concetrationOverLimit buffer concetrationLimit
 l buffer filter PressureOutput2
 slt pressureUnderLimit buffer pressureLimit
 and filterOn concetrationOverLimit pressureUnderLimit
-s filter On filterOn
+s filter Mode filterOn
 
 j Start
