@@ -6,13 +6,17 @@ alias increment r4
 alias delta r5
 alias correction r6
 alias applyCorrection r7
-
-define Degrees 16
+alias buffer r8
+alias invert r9
 
 # device types
+define dishSmall -2138748650
+define dishMedium 439026183
+define dishLarge 1913391845
 define switch 1773255945
 define displaySmall -2041948072
 define button 1462769197
+define landingPad -2066405918
 
 # devices 
 define switchDish HASH("Selector Switch")
@@ -23,10 +27,18 @@ define buttonUp HASH("Button Up")
 define buttonDown HASH("Button Down")
 define buttonLeft HASH("Button Left")
 define buttonRight HASH("Button Right")
+define buttonPowerSmall HASH("Power Small")
+define buttonPowerMedium HASH("Power Medium")
+define dishTradeSmall HASH("Small Trade Dish")
+define dishTradeMedium HASH("Medium Trade Dish")
+define dishTradeLarge HASH("Large Trade Dish")
+define buttonShutdown HASH("Shutdown Button")
+define landingPadDefault HASH("Landingpad Default")
+define buttonLandingPad HASH("Landingpad Button")
 
 # set display modes to degrees
-sbn displaySmall displayHorizontalRequired Mode Degrees
-sbn displaySmall displayVerticalRequired Mode Degrees
+sbn displaySmall displayHorizontalRequired Mode DisplayMode.Degrees
+sbn displaySmall displayVerticalRequired Mode DisplayMode.Degrees
 
 # dish selector on initialization
 lbn dish switch switchDish Setting Average
@@ -38,11 +50,30 @@ floor vertical vertical
 
 Start:
 yield
+
+lbn active button buttonShutdown Activate Average
+bnezal active Shutdown
+
+lbn active button buttonPowerSmall Activate Average
+lbn buffer dishSmall dishTradeSmall On Average
+select invert buffer 0 1
+select buffer active invert buffer
+sbn dishSmall dishTradeSmall On buffer
+select buffer buffer Color.Green Color.Red
+sbn button buttonPowerSmall Color buffer
+
+lbn active button buttonPowerMedium Activate Average
+lbn buffer dishMedium dishTradeMedium On Average
+select invert buffer 0 1
+select buffer active invert buffer
+sbn dishMedium dishTradeMedium On buffer
+select buffer buffer Color.Green Color.Red
+sbn button buttonPowerMedium Color buffer
+
 # todo: handle switching dishes
 lbn dish switch switchDish Setting Average
 lbn delta switch switchIncrement Setting Average
 select increment delta 10 1
-
 
 # read button for activation
 # increase vertical, prevent going over 90
@@ -79,3 +110,12 @@ s dr0 Horizontal horizontal
 s dr0 Vertical vertical
 
 j Start
+
+Shutdown:
+# turn off dishes
+sbn dishSmall dishTradeSmall On 0
+sbn dishMedium dishTradeMedium On 0
+# turn off trade platform
+sbn landingPad landingPadDefault On 0
+
+j ra
