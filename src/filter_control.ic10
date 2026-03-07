@@ -1,0 +1,20 @@
+alias filter db
+alias buffer r0
+alias filterOn r1
+define concetrationLimit 0.01
+define pressureLimit 35000
+alias concetrationOverLimit r2
+alias pressureUnderLimit r3
+
+
+Start:
+yield
+
+l buffer filter RatioCarbonDioxideInput
+sgt concetrationOverLimit buffer concetrationLimit
+l buffer filter PressureOutput2
+slt pressureUnderLimit buffer pressureLimit
+and filterOn concetrationOverLimit pressureUnderLimit
+s filter On filterOn
+
+j Start
