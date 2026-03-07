@@ -49,6 +49,12 @@
             "description": "Exported script 'filter_control.ic10'",
             "src_file": "filter_control.ic10",
             "script_directory": "Filter control"
+        },
+        {
+            "name": "Base gas control",
+            "description": "Exported script 'base_gas_control.ic10'",
+            "src_file": "base_gas_control.ic10",
+            "script_directory": "Base gas control"
         }
     ]
 }

@@ -1,0 +1,105 @@
+alias buff r0
+alias logicType r1
+alias displayHash r2
+alias requiredCO2 r3
+alias requiredN r4
+alias requiredTemperature r5
+alias requiredPressure r6
+alias delta r5
+# constants
+define Kelvin 273.15
+# device types
+define display -2041948072
+define gasSensor -1252983604
+define button 1462769197
+# devices
+define baseGasSensor HASH("Base Gas Sensor")
+define displayO2 HASH("Display O2")
+define displayVol HASH("Display Vol")
+define displayCO2 HASH("Display CO2")
+define displayN HASH("Display N")
+define displayTemperature HASH("Display Temperature")
+define displayRequiredTemperature HASH("Display Required Temperature")
+define displayPressure HASH("Display Pressure")
+define displayRequiredPressure HASH("Display Required Pressure")
+define displayRequiredCO2 HASH("Display Required CO2")
+define displayRequiredN HASH("Display Required N")
+define buttonDecreaseCO2 HASH("Button Decrease CO2")
+define buttonIncreaseCO2 HASH("Button Increase CO2")
+define buttonDecreaseN HASH("Button Decrease N")
+define buttonIncreaseN HASH("Button Increase N")
+define buttonIncreasetemperature HASH("Button Increase Temperature")
+define buttonDecreaseTemperature HASH("Button Decrease Temperature")
+define buttonIncreasePressure HASH("Button Increase Pressure")
+define buttonDecreasePressure HASH("Button Decrease Pressure")
+# initialization display modes
+sbn display displayO2 Mode DisplayMode.Percent
+sbn display displayVol Mode DisplayMode.Percent
+sbn display displayCO2 Mode DisplayMode.Percent
+sbn display displayN Mode DisplayMode.Percent
+sbn display displayRequiredCO2 Mode DisplayMode.Percent
+sbn display displayRequiredN Mode DisplayMode.Percent
+sbn display displayTemperature Mode DisplayMode.Celsius
+sbn display displayPressure Mode DisplayMode.Pa
+sbn display displayRequiredTemperature Mode DisplayMode.Celsius
+sbn display displayRequiredPressure Mode DisplayMode.Pa
+# initialization required values to current values
+lbn buff gasSensor baseGasSensor RatioNitrogen Average
+floor requiredCO2 buff
+lbn buff gasSensor baseGasSensor RatioCarbonDioxide Average
+floor requiredN buff
+lbn buff gasSensor baseGasSensor Temperature Average
+floor requiredTemperature buff
+lbn buff gasSensor baseGasSensor Pressure Average
+floor requiredPressure buff
+Start:
+yield
+lbn buff gasSensor baseGasSensor RatioOxygen Average
+sbn display displayO2 Setting buff
+lbn buff gasSensor baseGasSensor RatioNitrogen Average
+sbn display displayN Setting buff
+lbn buff gasSensor baseGasSensor RatioCarbonDioxide Average
+sbn display displayCO2 Setting buff
+lbn buff gasSensor baseGasSensor RatioVolatiles Average
+sbn display displayVol Setting buff
+lbn buff gasSensor baseGasSensor Temperature Average
+sub buff buff Kelvin
+sbn display displayTemperature Setting buff
+lbn buff gasSensor baseGasSensor Pressure Average
+sbn display displayPressure Setting buff
+
+lbn buff button buttonDecreaseCO2 Activate Average
+select delta buff -0.01 0 
+add requiredCO2 requiredCO2 delta
+sbn display displayRequiredCO2 Setting requiredCO2
+
+lbn buff button buttonIncreaseCO2 Activate Average
+select delta buff 0.01 0 
+add requiredCO2 requiredCO2 delta
+sbn display displayRequiredCO2 Setting requiredCO2  
+
+lbn buff button buttonDecreaseN Activate Average
+select delta buff -0.01 0
+add requiredN requiredN delta
+sbn display displayRequiredN Setting requiredN
+
+lbn buff button buttonIncreaseN Activate Average
+select delta buff 0.01 0
+add requiredN requiredN delta
+sbn display displayRequiredN Setting requiredN
+
+lbn buff button buttonIncreaseTemperature Activate Average
+select delta buff 1 0
+add requiredTemperature requiredTemperature delta
+sbn display displayRequiredTemperature Setting requiredTemperature
+
+lbn buff button buttonDecreaseTemperature Activate Average
+select delta buff -1 0
+add requiredTemperature requiredTemperature delta
+sbn display displayRequiredTemperature Setting requiredTemperature
+
+lbn buff button buttonIncreasePressure Activate Average
+select delta buff 1000 0
+add requiredPressure requiredPressure delta
+sbn display displayRequiredPressure Setting requiredPressure
+j Start
