@@ -82,6 +82,8 @@ def export_script(script_file: str) -> None:
     script_path = os.path.join(settings.config.path_cm10_code, script_file)
     print(f"Reading source code from '{script_path}'...")
     src_code = open(script_path, "r").read().strip()
+    if len(src_code) > 4096:
+        raise ValueError(f"The source code of '{script_file}' is too long. Please check the file size and content.")
 
     script_content = ScriptContent(
         name=script_config.name,
