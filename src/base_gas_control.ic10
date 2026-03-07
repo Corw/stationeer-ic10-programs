@@ -5,13 +5,14 @@ alias requiredCO2 r3
 alias requiredN r4
 alias requiredTemp r5
 alias requiredPres r6
-alias delta r5
+alias delta r7
 # constants
 define Kelvin 273.15
 # device types
 define disp -2041948072
 define gasSensor -1252983604
 define btn 1462769197
+define memory -851746783
 # devices
 define baseGasSensor HASH("Base Gas Sensor")
 define dispO2 HASH("Display O2")
@@ -19,9 +20,9 @@ define dispVol HASH("Display Vol")
 define dispCO2 HASH("Display CO2")
 define dispN HASH("Display N")
 define dispTemperature HASH("Display Temperature")
-define disprequiredTemp HASH("Display Required Temperature")
+define dispRequiredTemp HASH("Display Required Temperature")
 define dispPressure HASH("Display Pressure")
-define disprequiredPres HASH("Display Required Pressure")
+define dispRequiredPres HASH("Display Required Pressure")
 define dispRequiredCO2 HASH("Display Required CO2")
 define dispRequiredN HASH("Display Required N")
 define btnDecreaseCO2 HASH("Button Decrease CO2")
@@ -32,6 +33,8 @@ define btnIncreaseTemperature HASH("Button Increase Temperature")
 define btnDecreaseTemperature HASH("Button Decrease Temperature")
 define btnIncreasePressure HASH("Button Increase Pressure")
 define btnDecreasePressure HASH("Button Decrease Pressure")
+define memRequiredCO2 HASH("Memory Required CO2")
+define memRequiredN HASH("Memory Required N")
 # initialization disp modes
 sbn disp dispO2 Mode DisplayMode.Percent
 sbn disp dispVol Mode DisplayMode.Percent
@@ -41,8 +44,8 @@ sbn disp dispRequiredCO2 Mode DisplayMode.Percent
 sbn disp dispRequiredN Mode DisplayMode.Percent
 sbn disp dispTemperature Mode DisplayMode.Celsius
 sbn disp dispPressure Mode DisplayMode.Pa
-sbn disp disprequiredTemp Mode DisplayMode.Celsius
-sbn disp disprequiredPres Mode DisplayMode.Pa
+sbn disp dispRequiredTemp Mode DisplayMode.Celsius
+sbn disp dispRequiredPres Mode DisplayMode.Pa
 # initialization required values to current values
 lbn buff gasSensor baseGasSensor RatioNitrogen Average
 floor requiredCO2 buff
@@ -71,36 +74,33 @@ sbn disp dispPressure Setting buff
 
 lbn buff btn btnDecreaseCO2 Activate Average
 select delta buff -0.01 0 
-add requiredCO2 requiredCO2 delta
-sbn disp dispRequiredCO2 Setting requiredCO2
-
 lbn buff btn btnIncreaseCO2 Activate Average
-select delta buff 0.01 0 
+select delta buff 0.01 delta 
 add requiredCO2 requiredCO2 delta
 sbn disp dispRequiredCO2 Setting requiredCO2  
+sbn memory memRequiredCO2 Setting requiredCO2
 
 lbn buff btn btnDecreaseN Activate Average
 select delta buff -0.01 0
-add requiredN requiredN delta
-sbn disp dispRequiredN Setting requiredN
-
 lbn buff btn btnIncreaseN Activate Average
-select delta buff 0.01 0
+select delta buff 0.01 delta
 add requiredN requiredN delta
 sbn disp dispRequiredN Setting requiredN
+sbn memory memRequiredN Setting requiredN
 
 lbn buff btn btnIncreaseTemperature Activate Average
 select delta buff 1 0
-add requiredTemp requiredTemp delta
-sbn disp disprequiredTemp Setting requiredTemp
-
 lbn buff btn btnDecreaseTemperature Activate Average
-select delta buff -1 0
+select delta buff -1 delta
 add requiredTemp requiredTemp delta
-sbn disp disprequiredTemp Setting requiredTemp
+min requiredTemp requiredTemp 30
+max requiredTemp requiredTemp 15
+sbn disp dispRequiredTemp Setting requiredTemp
 
 lbn buff btn btnIncreasePressure Activate Average
-select delta buff 1000 0
+select delta buff 1 0
+lbn buff btn btnDecreasePressure Activate Average
+select delta buff -1 delta
 add requiredPres requiredPres delta
-sbn disp disprequiredPres Setting requiredPres
+sbn disp dispRequiredPres Setting requiredPres
 j Start
