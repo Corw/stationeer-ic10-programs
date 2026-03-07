@@ -49,6 +49,7 @@ floor requiredCO2 buff
 lbn buff gasSensor baseGasSensor RatioCarbonDioxide Average
 floor requiredN buff
 lbn buff gasSensor baseGasSensor Temperature Average
+sub buff buff Kelvin
 floor requiredTemp buff
 lbn buff gasSensor baseGasSensor Pressure Average
 floor requiredPres buff
