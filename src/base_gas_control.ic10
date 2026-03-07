@@ -1,105 +1,105 @@
 alias buff r0
 alias logicType r1
-alias displayHash r2
+alias dispHash r2
 alias requiredCO2 r3
 alias requiredN r4
-alias requiredTemperature r5
-alias requiredPressure r6
+alias requiredTemp r5
+alias requiredPres r6
 alias delta r5
 # constants
 define Kelvin 273.15
 # device types
-define display -2041948072
+define disp -2041948072
 define gasSensor -1252983604
-define button 1462769197
+define btn 1462769197
 # devices
 define baseGasSensor HASH("Base Gas Sensor")
-define displayO2 HASH("Display O2")
-define displayVol HASH("Display Vol")
-define displayCO2 HASH("Display CO2")
-define displayN HASH("Display N")
-define displayTemperature HASH("Display Temperature")
-define displayRequiredTemperature HASH("Display Required Temperature")
-define displayPressure HASH("Display Pressure")
-define displayRequiredPressure HASH("Display Required Pressure")
-define displayRequiredCO2 HASH("Display Required CO2")
-define displayRequiredN HASH("Display Required N")
-define buttonDecreaseCO2 HASH("Button Decrease CO2")
-define buttonIncreaseCO2 HASH("Button Increase CO2")
-define buttonDecreaseN HASH("Button Decrease N")
-define buttonIncreaseN HASH("Button Increase N")
-define buttonIncreasetemperature HASH("Button Increase Temperature")
-define buttonDecreaseTemperature HASH("Button Decrease Temperature")
-define buttonIncreasePressure HASH("Button Increase Pressure")
-define buttonDecreasePressure HASH("Button Decrease Pressure")
-# initialization display modes
-sbn display displayO2 Mode DisplayMode.Percent
-sbn display displayVol Mode DisplayMode.Percent
-sbn display displayCO2 Mode DisplayMode.Percent
-sbn display displayN Mode DisplayMode.Percent
-sbn display displayRequiredCO2 Mode DisplayMode.Percent
-sbn display displayRequiredN Mode DisplayMode.Percent
-sbn display displayTemperature Mode DisplayMode.Celsius
-sbn display displayPressure Mode DisplayMode.Pa
-sbn display displayRequiredTemperature Mode DisplayMode.Celsius
-sbn display displayRequiredPressure Mode DisplayMode.Pa
+define dispO2 HASH("Display O2")
+define dispVol HASH("Display Vol")
+define dispCO2 HASH("Display CO2")
+define dispN HASH("Display N")
+define dispTemperature HASH("Display Temperature")
+define disprequiredTemp HASH("Display Required Temperature")
+define dispPressure HASH("Display Pressure")
+define disprequiredPres HASH("Display Required Pressure")
+define dispRequiredCO2 HASH("Display Required CO2")
+define dispRequiredN HASH("Display Required N")
+define btnDecreaseCO2 HASH("Button Decrease CO2")
+define btnIncreaseCO2 HASH("Button Increase CO2")
+define btnDecreaseN HASH("Button Decrease N")
+define btnIncreaseN HASH("Button Increase N")
+define btnIncreaseTemperature HASH("Button Increase Temperature")
+define btnDecreaseTemperature HASH("Button Decrease Temperature")
+define btnIncreasePressure HASH("Button Increase Pressure")
+define btnDecreasePressure HASH("Button Decrease Pressure")
+# initialization disp modes
+sbn disp dispO2 Mode DisplayMode.Percent
+sbn disp dispVol Mode DisplayMode.Percent
+sbn disp dispCO2 Mode DisplayMode.Percent
+sbn disp dispN Mode DisplayMode.Percent
+sbn disp dispRequiredCO2 Mode DisplayMode.Percent
+sbn disp dispRequiredN Mode DisplayMode.Percent
+sbn disp dispTemperature Mode DisplayMode.Celsius
+sbn disp dispPressure Mode DisplayMode.Pa
+sbn disp disprequiredTemp Mode DisplayMode.Celsius
+sbn disp disprequiredPres Mode DisplayMode.Pa
 # initialization required values to current values
 lbn buff gasSensor baseGasSensor RatioNitrogen Average
 floor requiredCO2 buff
 lbn buff gasSensor baseGasSensor RatioCarbonDioxide Average
 floor requiredN buff
 lbn buff gasSensor baseGasSensor Temperature Average
-floor requiredTemperature buff
+floor requiredTemp buff
 lbn buff gasSensor baseGasSensor Pressure Average
-floor requiredPressure buff
+floor requiredPres buff
 Start:
 yield
 lbn buff gasSensor baseGasSensor RatioOxygen Average
-sbn display displayO2 Setting buff
+sbn disp dispO2 Setting buff
 lbn buff gasSensor baseGasSensor RatioNitrogen Average
-sbn display displayN Setting buff
+sbn disp dispN Setting buff
 lbn buff gasSensor baseGasSensor RatioCarbonDioxide Average
-sbn display displayCO2 Setting buff
+sbn disp dispCO2 Setting buff
 lbn buff gasSensor baseGasSensor RatioVolatiles Average
-sbn display displayVol Setting buff
+sbn disp dispVol Setting buff
 lbn buff gasSensor baseGasSensor Temperature Average
 sub buff buff Kelvin
-sbn display displayTemperature Setting buff
+sbn disp dispTemperature Setting buff
 lbn buff gasSensor baseGasSensor Pressure Average
-sbn display displayPressure Setting buff
+sbn disp dispPressure Setting buff
 
-lbn buff button buttonDecreaseCO2 Activate Average
+lbn buff btn btnDecreaseCO2 Activate Average
 select delta buff -0.01 0 
 add requiredCO2 requiredCO2 delta
-sbn display displayRequiredCO2 Setting requiredCO2
+sbn disp dispRequiredCO2 Setting requiredCO2
 
-lbn buff button buttonIncreaseCO2 Activate Average
+lbn buff btn btnIncreaseCO2 Activate Average
 select delta buff 0.01 0 
 add requiredCO2 requiredCO2 delta
-sbn display displayRequiredCO2 Setting requiredCO2  
+sbn disp dispRequiredCO2 Setting requiredCO2  
 
-lbn buff button buttonDecreaseN Activate Average
+lbn buff btn btnDecreaseN Activate Average
 select delta buff -0.01 0
 add requiredN requiredN delta
-sbn display displayRequiredN Setting requiredN
+sbn disp dispRequiredN Setting requiredN
 
-lbn buff button buttonIncreaseN Activate Average
+lbn buff btn btnIncreaseN Activate Average
 select delta buff 0.01 0
 add requiredN requiredN delta
-sbn display displayRequiredN Setting requiredN
+sbn disp dispRequiredN Setting requiredN
 
-lbn buff button buttonIncreaseTemperature Activate Average
+lbn buff btn btnIncreaseTemperature Activate Average
 select delta buff 1 0
-add requiredTemperature requiredTemperature delta
-sbn display displayRequiredTemperature Setting requiredTemperature
+add requiredTemp requiredTemp delta
+sbn disp disprequiredTemp Setting requiredTemp
 
-lbn buff button buttonDecreaseTemperature Activate Average
+lbn buff btn btnDecreaseTemperature Activate Average
 select delta buff -1 0
-add requiredTemperature requiredTemperature delta
-sbn display displayRequiredTemperature Setting requiredTemperature
+add requiredTemp requiredTemp delta
+sbn disp disprequiredTemp Setting requiredTemp
 
-lbn buff button buttonIncreasePressure Activate Average
+lbn buff btn btnIncreasePressure Activate Average
 select delta buff 1000 0
-add requiredPressure requiredPressure delta
-sbn display displayRequiredPressure Setting requiredPressure
+add requiredPres requiredPres delta
+sbn disp disprequiredPres Setting requiredPres
 j Start
