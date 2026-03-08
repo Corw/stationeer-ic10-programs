@@ -1,0 +1,83 @@
+# registers
+alias pressure r0
+alias pumpOn r1
+alias temperature r2
+alias temperatureO2 r3
+alias isCoolO2 r4
+alias isHot r5
+alias valveOn r6
+# constants
+define Kelvin 273.15
+define requiredPressure 1500
+define requiredTemperature 20
+# device types
+define analyzer 435685051
+define valve -1280984102
+define pump -321403609
+define display -2041948072
+# devices
+define pumpCO2 HASH("Pump Buffer CO2")
+define pumpN HASH("Pump Buffer N")
+define pumpO2 HASH("Pump Buffer O2")
+
+define analyzerCO2 HASH("Analyzer Buffer CO2")
+define analyzerN HASH("Analyzer Buffer N")
+define analyzerO2 HASH("Analyzer Buffer O2")
+
+define valveCO2 HASH("Valve Buffer Heater CO2")
+define valveN HASH("Valve Buffer Heater N")
+
+define displayTemperatureCO2 HASH("Display Temperature CO2")
+define displayPressureCO2 HASH("Display Pressure CO2")
+define displayTemperatureN HASH("Display Temperature N")
+define displayPressureN HASH("Display Pressure N")
+define displayTemperatureO2 HASH("Display Temperature O2")
+define displayPressureO2 HASH("Display Pressure O2")
+
+# init
+sbn display displayTemperatureCO2 Mode DisplayMode.Celsius
+sbn display displayPressureCO2 Mode DisplayMode.Pa
+sbn display displayTemperatureN Mode DisplayMode.Celsius
+sbn display displayPressureN Mode DisplayMode.Pa
+sbn display displayTemperatureO2 Mode DisplayMode.Celsius
+sbn display displayPressureO2 Mode DisplayMode.Pa
+
+Start:
+yield
+# control pressure
+lbn pressure analyzer analyzerCO2 Pressure Average
+sbn display displayPressureCO2 Setting pressure
+slt pumpOn pressure requiredPressure
+sbn pump pumpCO2 On pumpOn
+
+lbn pressure analyzer analyzerN Pressure Average
+sbn display displayPressureN Setting pressure
+slt pumpOn pressure requiredPressure
+sbn pump pumpN On pumpOn
+
+lbn pressure analyzer analyzerO2 Pressure Average
+sbn display displayPressureO2 Setting pressure
+slt pumpOn pressure requiredPressure
+sbn pump pumpO2 On pumpOn
+
+# control temperature
+lbn temperature analyzer analyzerO2 Temperature Average
+sub temperatureO2 temperature Kelvin
+sbn display displayTemperatureO2 Setting temperatureO2
+slt isCoolO2 temperatureO2 requiredTemperature
+
+lbn temperature analyzer analyzerCO2 Temperature Average
+sub temperature temperature Kelvin
+sbn display displayTemperatureCO2 Setting temperature
+sgt isHot temperature requiredTemperature
+and valveOn isCoolO2 isHot
+sbn valve valveCO2 On valveOn
+
+lbn temperature analyzer analyzerN Temperature Average
+sub temperature temperature Kelvin
+sbn display displayTemperatureN Setting temperature
+sgt isHot temperature requiredTemperature
+and valveOn isCoolO2 isHot
+sbn valve valveCO2 On valveOn
+
+j Start

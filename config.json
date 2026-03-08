@@ -67,6 +67,12 @@
             "description": "Shut down pumps when pipes are empty",
             "src_file": "empty_pipes_control.ic10",
             "script_directory": "Empty pipes control"
+        },
+        {
+            "name": "Gas conditioner command",
+            "description": "Exported script 'gas_conditioner_command.ic10'",
+            "src_file": "gas_conditioner_command.ic10",
+            "script_directory": "Gas conditioner command"
         }
     ]
 }
