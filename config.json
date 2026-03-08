@@ -61,6 +61,12 @@
             "description": "Exported script 'base_gas_command.ic10'",
             "src_file": "base_gas_command.ic10",
             "script_directory": "Base gas command"
+        },
+        {
+            "name": "Empty pipes control",
+            "description": "Shut down pumps when pipes are empty",
+            "src_file": "empty_pipes_control.ic10",
+            "script_directory": "Empty pipes control"
         }
     ]
 }

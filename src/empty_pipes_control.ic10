@@ -1,0 +1,44 @@
+# devices
+alias analyzer d0
+alias monitorButton d1
+alias gauge d2
+# registers
+alias pressure r0
+alias monitorPressure r1
+alias preassureOverTheshold r2
+alias gaugeColor r3
+alias gagugeValue r4
+# device types
+define pumps 1310794736
+# constants
+define threshold 0.1
+
+# init
+s gauge Color Color.Black
+s monitorButton Color Color.Black
+
+Start:
+l monitorPressure monitorButton Activate
+bgtz monitorPressure MonitorPressure
+yield
+j Start
+
+MonitorPressure:
+s monitorButton Color Color.Green
+yield
+# get pressure
+l pressure analyzer Pressure
+
+# set gauge color and value
+mul gagugeValue pressure 10
+sge preassureOverTheshold pressure threshold
+select gaugeColor preassureOverTheshold Color.Red Color.Green
+s gauge Color gaugeColor
+s gauge Setting gagugeValue
+
+bgtz pressure MonitorPressure # presure is over 0, continue monitoring
+# pressure is 0, shot down pumps and turn off console
+sb pumps On 0
+s gauge Color Color.Black
+s monitorButton Color Color.Black
+j Start
