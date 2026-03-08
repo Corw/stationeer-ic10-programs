@@ -28,6 +28,7 @@ s monitorButton Color Color.Green
 yield
 # get pressure
 l pressure analyzer Pressure
+blez pressure ShutDown # pressure is 0, shot down pumps and turn off console
 
 # set gauge color and value
 mul gagugeValue pressure 10
@@ -35,9 +36,9 @@ sge preassureOverTheshold pressure threshold
 select gaugeColor preassureOverTheshold Color.Red Color.Green
 s gauge Color gaugeColor
 s gauge Setting gagugeValue
+j MonitorPressure
 
-bgtz pressure MonitorPressure # presure is over 0, continue monitoring
-# pressure is 0, shot down pumps and turn off console
+ShutDown:
 sb pumps On 0
 s gauge Color Color.Black
 s monitorButton Color Color.Black
