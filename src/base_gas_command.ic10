@@ -1,7 +1,7 @@
 alias buff r0
 alias required r1
-alias differenceN r2
-alias differenceCO2 r3
+alias fulfilledN r2
+alias fulfilledCO2 r3
 # constants
 define Kelvin 273.15
 define temperatureTolerance 2
@@ -36,16 +36,16 @@ bge buff required CloseAll
 # pressure and temperature allow adjustment, check what we lack the most
 lbn buff gasSensor baseGasSensor RatioNitrogen Average
 lbn required memory memRequiredN Setting Average
-div differenceN buff required
+div fulfilledN buff required
 
 lbn buff gasSensor baseGasSensor RatioCarbonDioxide Average
 lbn required memory memRequiredCO2 Setting Average
-div differenceCO2 buff required
+div fulfilledCO2 buff required
 
-min buff differenceN differenceCO2
-bgtz buff AddOxygen # both gasese are equal or above required level
-blt differenceN differenceCO2 AddNitrogen
-blt differenceCO2 differenceN AddCarbonDioxide
+min buff fulfilledN fulfilledCO2
+bge buff 1 AddOxygen # both gasese are equal or above required level
+blt fulfilledN fulfilledCO2 AddNitrogen
+blt fulfilledCO2 fulfilledN AddCarbonDioxide
 CompletedAdjustingGases:
 
 j Start
