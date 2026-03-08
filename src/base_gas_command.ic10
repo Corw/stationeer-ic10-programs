@@ -1,0 +1,73 @@
+alias buff r0
+alias required r1
+alias differenceN r2
+alias differenceCO2 r3
+# constants
+define Kelvin 273.15
+define temperatureTolerance 2
+# device types
+define gasSensor -1252983604
+define memory -851746783
+define valve -1280984102
+# devices
+define baseGasSensor HASH("Base Gas Sensor")
+define memRequiredCO2 HASH("Memory Required CO2")
+define memRequiredN HASH("Memory Required N")
+define memRequiredTemp HASH("Memory Required Temperature")
+define memRequiredPres HASH("Memory Required Pressure")
+define valveCO2 HASH("CO2 Valve")
+define valveO2 HASH("O2 Valve")
+define valveN HASH("N Valve")
+
+Start:
+yield
+# check if temperature is within change tolerance
+lbn buff gasSensor baseGasSensor Temperature Average
+sub buff buff Kelvin
+lbn required memory memRequiredTemp Setting Average
+sub buff required buff
+abs buff buff
+bgt buff temperatureTolerance CloseAll
+# check if pressure is within change tolerance
+lbn buff gasSensor baseGasSensor Pressure Average
+lbn required memory memRequiredPres Setting Average
+bge buff required CloseAll
+
+# pressure and temperature allow adjustment, check what we lack the most
+lbn buff gasSensor baseGasSensor RatioNitrogen Average
+lbn required memory memRequiredN Setting Average
+div differenceN buff required
+
+lbn buff gasSensor baseGasSensor RatioCarbonDioxide Average
+lbn required memory memRequiredCO2 Setting Average
+div differenceCO2 buff required
+
+min buff differenceN differenceCO2
+bgtz buff AddOxygen # both gasese are equal or above required level
+blt differenceN differenceCO2 AddNitrogen
+blt differenceCO2 differenceN AddCarbonDioxide
+CompletedAdjustingGases:
+
+j Start
+
+AddOxygen:
+sbn valve valveO2 On 1
+sbn valve valveCO2 On 0
+sbn valve valveN On 0
+j CompletedAdjustingGases
+
+AddNitrogen:
+sbn valve valveO2 On 0
+sbn valve valveCO2 On 0
+sbn valve valveN On 1
+j CompletedAdjustingGases
+
+AddCarbonDioxide:
+sbn valve valveO2 On 0
+sbn valve valveCO2 On 1
+sbn valve valveN On 0
+j CompletedAdjustingGases
+
+CloseAll:
+sb valve On 0
+j Start
