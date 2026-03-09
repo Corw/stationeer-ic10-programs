@@ -2,9 +2,14 @@ alias buff r0
 alias required r1
 alias fulfilledN r2
 alias fulfilledCO2 r3
+alias diff r4
+alias requiresAdjustment r5
 # constants
 define Kelvin 273.15
 define temperatureTolerance 2
+define StateOk 0
+define StateAsjust 1
+define StateCold 2
 # device types
 define gasSensor -1252983604
 define memory -851746783
@@ -18,6 +23,9 @@ define memRequiredPres HASH("Memory Required Pressure")
 define valveCO2 HASH("CO2 Valve")
 define valveO2 HASH("O2 Valve")
 define valveN HASH("N Valve")
+define valveCooling HASH("Valve Cooling")
+define valveHeating HASH("Valve Heating")
+
 
 Start:
 yield
@@ -25,13 +33,22 @@ yield
 lbn buff gasSensor baseGasSensor Temperature Average
 sub buff buff Kelvin
 lbn required memory memRequiredTemp Setting Average
-sub buff required buff
-abs buff buff
-bgt buff temperatureTolerance CloseAll
+sub diff buff required 
+
+# get absolute difference
+abs buff diff
+# get how much is out of tolerance
+sub buff buff temperatureTolerance
+# check if it requires adjusment
+sgtz requiresAdjustment buff
+select buff requiresAdjustment HeatAdjustment CloseHeatAdjustment
+jal buff
+# close adjustment if heat neads adjustment
+bgtz requiresAdjustment CloseGasAdjutments
 # check if pressure is within change tolerance
 lbn buff gasSensor baseGasSensor Pressure Average
 lbn required memory memRequiredPres Setting Average
-bge buff required CloseAll
+bge buff required CloseGasAdjutments
 
 # pressure and temperature allow adjustment, check what we lack the most
 lbn buff gasSensor baseGasSensor RatioNitrogen Average
@@ -68,6 +85,22 @@ sbn valve valveCO2 On 1
 sbn valve valveN On 0
 j CompletedAdjustingGases
 
-CloseAll:
-sb valve On 0
+CloseGasAdjutments:
+sbn valve valveO2 On 0
+sbn valve valveCO2 On 0
+sbn valve valveN On 0
 j Start
+
+CloseHeatAdjustment:
+s db Setting CloseHeatAdjustment
+sbn valve valveHeating On 0
+sbn valve valveCooling On 0
+j ra
+
+HeatAdjustment:
+s db Setting HeatAdjustment
+sgtz buff diff
+sbn valve valveCooling On buff
+select buff buff 0 1
+sbn valve valveHeating On buff
+j ra
