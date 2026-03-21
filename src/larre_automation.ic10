@@ -1,0 +1,45 @@
+alias harv d0
+alias pos r0
+alias idle r1
+alias plant r2
+alias state r3
+
+# constants
+define tray 255
+
+define CollectingSeeds 0
+define CollectingPlants 1
+
+define SeedingSeed 1
+define SeedingHarvested 0
+define SeeingImmature -1
+
+move pos 0 
+move state CollectingSeeds
+
+s harv Setting pos
+
+Start:
+yield
+
+# action only idle
+l idle harv Idle
+beqz idle Start
+
+beq state CollectingSeeds CollectingSeed
+
+j Start
+
+CollectingSeed:
+ls plant harv tray Seeding
+beq plant SeedingSeed Activation
+j Step
+
+Activation:
+s harv Acceleration 1
+j Start
+
+Step:
+sub pos pos 1
+s harv Setting pos
+j Start

@@ -73,6 +73,12 @@
             "description": "Exported script 'gas_conditioner_command.ic10'",
             "src_file": "gas_conditioner_command.ic10",
             "script_directory": "Gas conditioner command"
+        },
+        {
+            "name": "Larre automation",
+            "description": "Exported script 'larre_automation.ic10'",
+            "src_file": "larre_automation.ic10",
+            "script_directory": "Larre automation"
         }
     ]
 }
