@@ -1,5 +1,6 @@
 alias harv d0
 alias state d1
+alias seedSupply d2
 alias buff r0
 alias val r1
 alias reqPlantState r5
@@ -7,27 +8,22 @@ alias program r10
 alias stateHand r11
 alias statePosition r12
 alias statePlant r13
-#   coordinates
 define CooHome 0
 define CooUnloader 1
 define CooLoader 2
-#   programs
 define ProgHarvestSeed 0
 define ProgHarvestPlant 1
 define ProgSeed 2
-#   positions
 define AtHome 0
 define AtUnloader 1
 define AtLoader 2
 define AtField 3
 define AtEnd 4
-#   state plant
 define PlantNone 10
 define PlantGrowing 20
 define PlantMatureSeed 30
 define PlantMature 40
 define PlantDead 50
-#   state item
 define ItemEmpty 0
 define ItemOccupied 100
 define ItemFull 200
@@ -42,7 +38,6 @@ beq program ProgHarvestSeed ProgramHarvestSeed
 beq program ProgHarvestPlant ProgramHarvestPlant
 beq program ProgSeed ProgramSeed
 j Start
-
 DetermineState:
 mod val buff 10
 move statePosition val
@@ -53,73 +48,69 @@ sub buff buff val
 mod val buff 1000
 move stateHand val
 j ra
-
 # programs
 ProgramHarvestSeed:
 move reqPlantState PlantMatureSeed
 j ProgramHarvest
-
 ProgramHarvestPlant:
 move reqPlantState PlantMature
 j ProgramHarvest
-
 ProgramHarvest:
 beq statePosition AtHome DoStep
 beq statePosition AtField DoHarvest
 beq statePosition AtUnloader DoUnload
 beq statePosition AtEnd DoEnd
-
 ProgramSeed:
 beq stateHand ItemEmpty DoLoadSeed
 beq statePosition AtLoader DoGoHome
+beq statePosition AtUnloader DoUnload
 beq statePosition AtHome DoStep
 beq statePosition AtField DoSeed
 beq statePosition AtEnd DoEnd
-# actions
 DoStep:
 l val harv Setting
 sub val val 1
 s harv Setting val
 j Start
-
 DoGoHome:
 s harv Setting CooHome
 j Start
-
 DoActivate:
 s harv Activate 1
 j Start
-
 DoHarvest:
 beq stateHand ItemFull DoGoUnload
 bne statePlant reqPlantState DoStep
 j DoActivate
-
 DoGoUnload:
 s harv Setting CooUnloader
 j Start
-
 DoUnload:
-beq stateHand ItemEmpty DoGoHome
-j DoActivate
-
+bgt stateHand ItemEmpty DoActivate
+j DoGoHome
 DoEnd:
+seq buff program ProgHarvestSeed
+seq val stateHand ItemEmpty
+and buff buff val
+# if last program was seed harcest and ended without seeds
+beqz buff DoBreak 
 add program program 1
 sgt buff program ProgSeed
 select program buff ProgHarvestSeed program
-
-beq stateHand ItemOccupied DoGoUnload
-beq stateHand ItemFull DoGoUnload
+bgt stateHand ItemEmpty DoGoUnload
 beq stateHand ItemEmpty DoGoHome
-
 DoLoadSeed:
+ls buff seedSupply 0 Occupied
+beqz buff DoEnd
 beq statePosition AtLoader DoActivate
 j DoGoLoader
-
 DoGoLoader:
 s harv Setting CooLoader
 j Start
-
 DoSeed:
 beq statePlant PlantNone DoActivate
 j DoStep
+DoBreak:
+s harv Setting CooHome
+sleep 30
+j Start
