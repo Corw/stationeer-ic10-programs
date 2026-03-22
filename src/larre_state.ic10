@@ -101,22 +101,22 @@ move statePlant PlantUndefined
 # if we are not in the field, plant state undefined
 l val harv TargetPrefabHash
 seq val val HydroponicsTray
-breqz val ra
+beqz val ra
 
 # check if there is plant, exit if not
 move statePlant PlantNone
 ls val harv Tray Occupied
-breqz val ra
+beqz val ra
 
 # check if plant is dead, exit if yes
 move statePlant PlantDead
 ls val harv Tray Damage
-brnez val ra
+bnez val ra
 
 # check seeding, under 0 is growing
 move statePlant PlantGrowing
 ls val harv Tray Seeding
-brltz val ra
+bltz val ra
 
 select statePlant val PlantMatureSeed PlantMature
 j ra
