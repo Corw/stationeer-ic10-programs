@@ -85,6 +85,12 @@
             "description": "Exported script 'larre_state.ic10'",
             "src_file": "larre_state.ic10",
             "script_directory": "Larre state"
+        },
+        {
+            "name": "Termostat",
+            "description": "Exported script 'termostat.ic10'",
+            "src_file": "termostat.ic10",
+            "script_directory": "Termostat"
         }
     ]
 }

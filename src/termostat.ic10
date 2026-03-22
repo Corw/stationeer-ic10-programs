@@ -1,0 +1,33 @@
+alias temperature r0
+alias termostat r1
+alias difference r2
+alias absolute r3
+alias isOutOfRange r4
+alias isTooHot r5
+alias CoolingOn r6
+# device types
+define gasSensor -1252983604
+define memory -851746783
+define valve -1280984102
+# constants
+define Kelvin 273.15
+define tolerance 2
+# devices
+define roomSensor HASH("Room Gas Sensor")
+define valveCooling HASH("Valve Cooling")
+define memoryTermostat HASH("Memory Termostat")
+
+Start:
+yield
+
+lbn temperature gasSensor roomSensor Temperature Average
+sub temperature temperature Kelvin
+lbn termostat memory memoryTermostat Setting Average
+sub difference temperature termostat
+abs absolute difference
+sgt isOutOfRange absolute tolerance
+sgtz isTooHot difference
+and CoolingOn isOutOfRange isTooHot
+sbn valve valveCooling On CoolingOn
+
+j Start
