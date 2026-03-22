@@ -1,8 +1,10 @@
 alias harv d0
+alias endSetting d1
 alias buff r0
 alias val r1
 alias selectedContainer r2
 alias result r3
+alias CooEnd r4
 alias statePosition r10
 alias statePlant r11
 alias stateHand r12
@@ -16,7 +18,6 @@ define HydroponicsTray 1464854517
 define CooHome 0
 define CooUnloader 1
 define CooLoader 2
-define CooEnd -13
 #   positions
 define AtHome 0
 define AtUnloader 1
@@ -42,6 +43,7 @@ move stateHand 0
 
 Start:
 yield
+l CooEnd endSetting Setting
 # action only idle
 l buff harv Idle
 beqz buff SetActive
