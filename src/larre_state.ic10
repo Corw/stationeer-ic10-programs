@@ -45,7 +45,7 @@ yield
 
 # action only idle
 l buff harv Idle
-beqz buff SetIdle
+beqz buff SetActive
 
 jal DetermineStatePosition
 # determine stateHand
@@ -62,7 +62,7 @@ s db Setting buff
 
 j Start
 
-SetIdle:
+SetActive:
 s db Setting -1
 j Start
 
