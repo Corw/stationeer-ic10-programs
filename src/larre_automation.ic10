@@ -7,10 +7,10 @@ alias program r10
 alias stateHand r11
 alias statePosition r12
 alias statePlant r13
-# constants
 #   coordinates
 define CooHome 0
 define CooUnloader 1
+define CooLoader 2
 #   programs
 define ProgHarvestSeed 0
 define ProgHarvestPlant 1
@@ -18,8 +18,9 @@ define ProgSeed 2
 #   positions
 define AtHome 0
 define AtUnloader 1
-define AtField 2
-define AtEnd 3
+define AtLoader 2
+define AtField 3
+define AtEnd 4
 #   state plant
 define PlantNone 10
 define PlantGrowing 20
@@ -34,26 +35,23 @@ define ItemFull 200
 move program ProgHarvestSeed
 Start:
 yield
-# action only idle
 l buff state Setting
 bltz buff Start
 jal DetermineState
 beq program ProgHarvestSeed ProgramHarvestSeed
 beq program ProgHarvestPlant ProgramHarvestPlant
+beq program ProgSeed ProgramSeed
 j Start
 
 DetermineState:
 mod val buff 10
 move statePosition val
 sub buff buff val
-
 mod val buff 100
 move statePlant val
 sub buff buff val
-
 mod val buff 1000
 move stateHand val
-
 j ra
 
 # programs
@@ -70,7 +68,13 @@ beq statePosition AtHome DoStep
 beq statePosition AtField DoHarvest
 beq statePosition AtUnloader DoUnload
 beq statePosition AtEnd DoEnd
-j Start
+
+ProgramSeed:
+beq stateHand ItemEmpty DoLoadSeed
+beq statePosition AtLoader DoGoHome
+beq statePosition AtHome DoStep
+beq statePosition AtField DoSeed
+beq statePosition AtEnd DoEnd
 # actions
 DoStep:
 l val harv Setting
@@ -100,11 +104,22 @@ beq stateHand ItemEmpty DoGoHome
 j DoActivate
 
 DoEnd:
-# move to next program
 add program program 1
-sgt buff program ProgHarvestPlant
+sgt buff program ProgSeed
 select program buff ProgHarvestSeed program
 
 beq stateHand ItemOccupied DoGoUnload
 beq stateHand ItemFull DoGoUnload
 beq stateHand ItemEmpty DoGoHome
+
+DoLoadSeed:
+beq statePosition AtLoader DoActivate
+j DoGoLoader
+
+DoGoLoader:
+s harv Setting CooLoader
+j Start
+
+DoSeed:
+beq statePlant PlantNone DoActivate
+j DoStep
