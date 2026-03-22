@@ -1,45 +1,108 @@
 alias harv d0
-alias pos r0
-alias idle r1
-alias plant r2
-alias state r3
+alias state d1
+alias buff r0
+alias val r1
+alias selectedContainer r2
+alias return r3
+alias result r4
+alias reqPlantState r5
+
+alias program r10
+alias stateHand r11
+alias statePosition r12
+alias statePlant r13
 
 # constants
-define tray 255
+#   coordinates
+define CooHome 0
+define CooUnloader 1
+#   programs
+define ProgHarvestSeed 0
+define ProgHarvestPlant 1
+define ProgSeed 2
+#   positions
+define AtHome 0
+define AtUnloader 1
+define AtField 2
+define AtEnd 3
+#   state plant
+define PlantUndefined 0
+define PlantNone 10
+define PlantGrowing 20
+define PlantMatureSeed 30
+define PlantMature 40
+define PlantDead 50
+#   state item
+define ItemEmpty 0
+define ItemOccupied 100
+define ItemFull 200
 
-define CollectingSeeds 0
-define CollectingPlants 1
-
-define SeedingSeed 1
-define SeedingHarvested 0
-define SeeingImmature -1
-
-move pos 0 
-move state CollectingSeeds
-
-s harv Setting pos
-
+# intitialization
+move program ProgHarvestSeed
 Start:
 yield
 
 # action only idle
-l idle harv Idle
-beqz idle Start
+l buff state Setting
+bltz buff Start
 
-beq state CollectingSeeds CollectingSeed
+jal DetermineState
+beq program ProgHarvestSeed ProgramHarvestSeed
 
 j Start
 
-CollectingSeed:
-ls plant harv tray Seeding
-beq plant SeedingSeed Activation
-j Step
+DetermineState:
+mod val buff 10
+move statePosition val
+sub buff buff val
 
-Activation:
-s harv Acceleration 1
+mod val buff 100
+move statePlant val
+sub buff buff val
+
+mod val buff 1000
+move stateHand val
+
+j ra
+
+# programs
+ProgramHarvestSeed:
+move reqPlantState PlantMatureSeed
+beq statePosition AtHome DoStep
+beq statePosition AtField DoHarvest
+beq statePosition AtUnloader DoUnload
+beq statePosition AtEnd DoEnd
 j Start
 
-Step:
-sub pos pos 1
-s harv Setting pos
+# actions
+DoStep:
+l val harv Setting
+sub val val 1
+s harv Setting val
 j Start
+
+DoGoHome:
+s harv Setting CooHome
+j Start
+
+DoActivate:
+s harv Activate 1
+j Start
+
+DoHarvest:
+beq stateHand ItemFull DoGoUnload
+bne statePlant reqPlantState DoStep
+j DoActivate
+
+DoGoUnload:
+s harv Setting CooUnloader
+j Start
+
+DoUnload:
+beq stateHand ItemEmpty DoGoHome
+j DoActivate
+
+DoEnd:
+beq stateHand ItemOccupied DoGoUnload
+beq stateHand ItemFull DoGoUnload
+beq stateHand ItemEmpty DoGoHome

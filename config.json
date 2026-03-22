@@ -79,6 +79,12 @@
             "description": "Exported script 'larre_automation.ic10'",
             "src_file": "larre_automation.ic10",
             "script_directory": "Larre automation"
+        },
+        {
+            "name": "Larre state",
+            "description": "Exported script 'larre_state.ic10'",
+            "src_file": "larre_state.ic10",
+            "script_directory": "Larre state"
         }
     ]
 }

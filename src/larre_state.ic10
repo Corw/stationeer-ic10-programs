@@ -1,0 +1,118 @@
+alias harv d0
+
+alias buff r0
+alias val r1
+alias selectedContainer r2
+alias result r3
+
+alias statePosition r10
+alias statePlant r11
+alias stateHand r12
+
+# constants
+define Hand 0
+define Hopper 1
+define Tray 255
+
+#   coordinates
+define CooHome 0
+define CooUnloader 1
+#   positions
+define AtHome 0
+define AtUnloader 1
+define AtField 2
+define AtEnd 3
+#   state plant
+define PlantUndefined 0
+define PlantNone 10
+define PlantGrowing 20
+define PlantMatureSeed 30
+define PlantMature 40
+define PlantDead 50
+#   state item
+define ItemEmpty 0
+define ItemOccupied 100
+define ItemFull 200
+
+# initialization
+move result 0
+move statePosition 0
+move statePlant 0
+move stateHand 0
+
+Start:
+yield
+
+# action only idle
+l buff harv Idle
+beqz buff SetIdle
+
+jal DetermineStatePosition
+# determine stateHand
+move selectedContainer Hand
+jal DetermineStateContainer
+move stateHand result
+
+jal DetermineStatePlant
+
+move buff statePosition
+add buff buff statePlant
+add buff buff stateHand
+s db Setting buff
+
+j Start
+
+SetIdle:
+s db Setting -1
+j Start
+
+DetermineStatePosition:
+move statePosition AtEnd
+l val harv Error
+bgtzal val ra
+
+l val harv Setting
+seq buff val CooHome
+select statePosition buff AtHome statePosition
+seq buff val CooUnloader
+select statePosition buff AtUnloader statePosition
+sltz buff val
+select statePosition buff AtField statePosition
+j ra
+
+DetermineStateContainer:
+move result ItemEmpty
+# check if occupied
+ls val harv selectedContainer Occupied
+select result val ItemOccupied result
+beq result ItemEmpty ra
+# check if full
+ls val harv selectedContainer Quantity
+ls buff harv selectedContainer MaxQuantity
+seq buff buff val
+select result buff ItemFull result
+j ra
+
+DetermineStatePlant:
+move statePlant PlantUndefined
+# if we are not in the field, plant state undefined
+sne val statePosition AtField
+bgtz val ra
+
+# check if there is plant, exit if not
+ls val harv Tray Occupied
+move statePlant PlantNone
+breqz val ra
+
+# check if plant is dead, exit if yes
+ls val harv Tray Damage
+move statePlant PlantDead
+brnez val ra
+
+# check seeding, under 0 is growing
+ls val harv Tray Seeding
+move statePlant PlantGrowing
+brltz val ra
+
+select statePlant val PlantMatureSeed PlantMature
+j ra
