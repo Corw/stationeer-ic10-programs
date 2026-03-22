@@ -2,16 +2,11 @@ alias harv d0
 alias state d1
 alias buff r0
 alias val r1
-alias selectedContainer r2
-alias return r3
-alias result r4
 alias reqPlantState r5
-
 alias program r10
 alias stateHand r11
 alias statePosition r12
 alias statePlant r13
-
 # constants
 #   coordinates
 define CooHome 0
@@ -26,7 +21,6 @@ define AtUnloader 1
 define AtField 2
 define AtEnd 3
 #   state plant
-define PlantUndefined 0
 define PlantNone 10
 define PlantGrowing 20
 define PlantMatureSeed 30
@@ -36,20 +30,16 @@ define PlantDead 50
 define ItemEmpty 0
 define ItemOccupied 100
 define ItemFull 200
-
 # intitialization
 move program ProgHarvestSeed
 Start:
 yield
-
 # action only idle
 l buff state Setting
 bltz buff Start
-
 jal DetermineState
 beq program ProgHarvestSeed ProgramHarvestSeed
 beq program ProgHarvestPlant ProgramHarvestPlant
-
 j Start
 
 DetermineState:
@@ -69,20 +59,18 @@ j ra
 # programs
 ProgramHarvestSeed:
 move reqPlantState PlantMatureSeed
-beq statePosition AtHome DoStep
-beq statePosition AtField DoHarvest
-beq statePosition AtUnloader DoUnload
-beq statePosition AtEnd DoEnd
-j Start
+j ProgramHarvest
 
 ProgramHarvestPlant:
 move reqPlantState PlantMature
+j ProgramHarvest
+
+ProgramHarvest:
 beq statePosition AtHome DoStep
 beq statePosition AtField DoHarvest
 beq statePosition AtUnloader DoUnload
 beq statePosition AtEnd DoEnd
 j Start
-
 # actions
 DoStep:
 l val harv Setting
