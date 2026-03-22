@@ -92,8 +92,8 @@ DoEnd:
 seq buff program ProgHarvestSeed
 seq val stateHand ItemEmpty
 and buff buff val
-# if last program was seed harcest and ended without seeds
-beqz buff DoBreak 
+# if last program was seed harvest and ended without seeds
+bgtz buff DoBreak 
 add program program 1
 sgt buff program ProgSeed
 select program buff ProgHarvestSeed program
