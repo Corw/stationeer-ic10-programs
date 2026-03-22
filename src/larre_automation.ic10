@@ -48,6 +48,7 @@ bltz buff Start
 
 jal DetermineState
 beq program ProgHarvestSeed ProgramHarvestSeed
+beq program ProgHarvestPlant ProgramHarvestPlant
 
 j Start
 
@@ -68,6 +69,14 @@ j ra
 # programs
 ProgramHarvestSeed:
 move reqPlantState PlantMatureSeed
+beq statePosition AtHome DoStep
+beq statePosition AtField DoHarvest
+beq statePosition AtUnloader DoUnload
+beq statePosition AtEnd DoEnd
+j Start
+
+ProgramHarvestPlant:
+move reqPlantState PlantMature
 beq statePosition AtHome DoStep
 beq statePosition AtField DoHarvest
 beq statePosition AtUnloader DoUnload
@@ -103,6 +112,11 @@ beq stateHand ItemEmpty DoGoHome
 j DoActivate
 
 DoEnd:
+# move to next program
+add program program 1
+sgt buff program ProgHarvestPlant
+select program buff ProgHarvestSeed program
+
 beq stateHand ItemOccupied DoGoUnload
 beq stateHand ItemFull DoGoUnload
 beq stateHand ItemEmpty DoGoHome
