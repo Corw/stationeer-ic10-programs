@@ -1,30 +1,28 @@
 alias harv d0
-
 alias buff r0
 alias val r1
 alias selectedContainer r2
 alias result r3
-
 alias statePosition r10
 alias statePlant r11
 alias stateHand r12
-
 # constants
 define Hand 0
 define Hopper 1
 define Tray 255
-
 # devices
 define HydroponicsTray 1464854517
-
 #   coordinates
 define CooHome 0
 define CooUnloader 1
+define CooLoader 2
+define CooEnd -13
 #   positions
 define AtHome 0
 define AtUnloader 1
-define AtField 2
-define AtEnd 3
+define AtLoader 2
+define AtField 3
+define AtEnd 4
 #   state plant
 define PlantUndefined 0
 define PlantNone 10
@@ -36,7 +34,6 @@ define PlantDead 50
 define ItemEmpty 0
 define ItemOccupied 100
 define ItemFull 200
-
 # initialization
 move result 0
 move statePosition 0
@@ -45,24 +42,19 @@ move stateHand 0
 
 Start:
 yield
-
 # action only idle
 l buff harv Idle
 beqz buff SetActive
-
 jal DetermineStatePosition
 # determine stateHand
 move selectedContainer Hand
 jal DetermineStateContainer
 move stateHand result
-
 jal DetermineStatePlant
-
 move buff statePosition
 add buff buff statePlant
 add buff buff stateHand
 s db Setting buff
-
 j Start
 
 SetActive:
@@ -75,10 +67,15 @@ l val harv Error
 bgtzal val ra
 
 l val harv Setting
+seq buff val CooEnd
+bgtzal buff ra
+
 seq buff val CooHome
 select statePosition buff AtHome statePosition
 seq buff val CooUnloader
 select statePosition buff AtUnloader statePosition
+seq buff val CooLoader
+select statePosition buff AtLoader statePosition
 sltz buff val
 select statePosition buff AtField statePosition
 j ra
