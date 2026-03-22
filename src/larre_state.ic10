@@ -14,6 +14,9 @@ define Hand 0
 define Hopper 1
 define Tray 255
 
+# devices
+define HydroponicsTray 1464854517
+
 #   coordinates
 define CooHome 0
 define CooUnloader 1
@@ -96,22 +99,23 @@ j ra
 DetermineStatePlant:
 move statePlant PlantUndefined
 # if we are not in the field, plant state undefined
-sne val statePosition AtField
-bgtz val ra
+l val harv TargetPrefabHash
+seq val val HydroponicsTray
+breqz val ra
 
 # check if there is plant, exit if not
-ls val harv Tray Occupied
 move statePlant PlantNone
+ls val harv Tray Occupied
 breqz val ra
 
 # check if plant is dead, exit if yes
-ls val harv Tray Damage
 move statePlant PlantDead
+ls val harv Tray Damage
 brnez val ra
 
 # check seeding, under 0 is growing
-ls val harv Tray Seeding
 move statePlant PlantGrowing
+ls val harv Tray Seeding
 brltz val ra
 
 select statePlant val PlantMatureSeed PlantMature
