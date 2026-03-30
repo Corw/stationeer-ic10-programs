@@ -1,0 +1,30 @@
+alias sensorDaylight d0
+# alias sensorOccupancy d1
+alias IsDaylight r0
+alias GrowlightOn r1
+define GrowLights -1758710260
+alias vertical r2
+
+start:
+yield
+
+# grow lights
+#l IsDaylight sensorDaylight SolarIrradiance
+#sgtz GrowlightOn IsDaylight
+#sb GrowLights On GrowlightOn
+
+l vertical sensorDaylight Vertical
+abs vertical vertical
+sle GrowlightOn vertical 90
+sb GrowLights On GrowlightOn
+
+# occupancy
+# define WallLights 555215790
+# alias quantity r2
+# alias LightsOn r3
+
+# l quantity sensorOccupancy Quantity
+# sgtz LightsOn quantity
+# sb WallLights On LightsOn
+
+j start

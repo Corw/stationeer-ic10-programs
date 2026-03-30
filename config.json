@@ -91,6 +91,24 @@
             "description": "Exported script 'termostat.ic10'",
             "src_file": "termostat.ic10",
             "script_directory": "Termostat"
+        },
+        {
+            "name": "Fermenter switch",
+            "description": "Exported script 'fermenter_switch.ic10'",
+            "src_file": "fermenter_switch.ic10",
+            "script_directory": "Fermenter switch"
+        },
+        {
+            "name": "Fermenters supply",
+            "description": "Exported script 'fermenters_supply.ic10'",
+            "src_file": "fermenters_supply.ic10",
+            "script_directory": "Fermenters supply"
+        },
+        {
+            "name": "Grow lights",
+            "description": "Exported script 'grow_lights.ic10'",
+            "src_file": "grow_lights.ic10",
+            "script_directory": "Grow lights"
         }
     ]
 }
