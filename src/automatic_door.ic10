@@ -1,0 +1,121 @@
+# device types
+define plates -2008706143
+define doors -324331872
+# devices
+define Door1 HASH("Door1")
+define Door2 HASH("Door2")
+define PlateOut1 HASH("PlateOut1")
+define PlateOut2 HASH("PlateOut2")
+define PlateIn HASH("PlateIn")
+# constants
+define CyclesWait 10
+# state and device values
+alias state r0
+alias plateOut1Press r1
+alias plateOut2Press r2
+alias plateInPress r3
+alias door1 r4
+alias door2 r5
+alias counter r6
+alias prevState r7
+alias door1Open r8
+alias door2Open r9
+alias buffer r10
+# states
+define Init -1
+define PlateIdle 0
+define PlateOut1Press 1
+define PlateOut2Press 2
+define PlateInPress 3
+# initialize
+move state Init
+
+Start:
+# s db Setting state
+yield
+
+lbn plateOut1Press plates PlateOut1 Setting Maximum
+lbn plateOut2Press plates PlateOut2 Setting Maximum
+lbn plateInPress plates PlateIn Setting Maximum
+lbn door1 doors Door1 Open Maximum
+lbn door2 doors Door2 Open Maximum
+
+s db Setting plateOut1Press
+
+beq state Init StateInit
+beq state PlateIdle StateIdle
+beq state PlateOut1Press StatePlateOut1Press
+beq state PlateOut2Press StatePlateOut2Press
+beq state PlateInPress StatePlateInPress
+
+j Start
+
+# states
+StateInit:
+j GoStateIdle
+
+StateIdle:
+beq plateOut1Press 1 GoState1Press
+beq plateOut2Press 1 GoState2Press
+beq plateInPress 1 GoState1Press # safety
+j Start
+
+StatePlateOut1Press:
+beq plateOut1Press 1 Start
+beq plateInPress 1 GoStateInPress
+beq plateOut2Press 1 GoState2Press
+sub counter counter 1
+beqz counter GoStateIdle
+j Start
+
+StatePlateOut2Press:
+beq plateOut2Press 1 Start
+beq plateInPress 1 GoStateInPress
+beq plateOut1Press 1 GoState1Press
+sub counter counter 1
+beqz counter GoStateIdle
+j Start
+
+StatePlateInPress:
+beq plateInPress 1 Start
+beq plateOut1Press 1 GoState1Press
+beq plateOut2Press 1 GoState2Press
+sub counter counter 1
+beqz counter GoStateIdle
+j Start
+
+# transitions
+GoStateIdle:
+move state PlateIdle
+sbn doors Door1 Open 0
+sbn doors Door2 Open 0
+j Start
+
+GoState1Press:
+move state PlateOut1Press
+move counter CyclesWait
+sbn doors Door1 Open 1
+sbn doors Door2 Open 0
+j Start
+
+GoState2Press:
+move state PlateOut2Press
+move counter CyclesWait
+sbn doors Door1 Open 0
+sbn doors Door2 Open 1
+j Start
+
+GoStateInPress:
+move prevState state
+move state PlateInPress
+move counter CyclesWait
+
+seq buffer prevState PlateOut1Press
+select door1Open buffer 0 1
+
+seq buffer prevState PlateOut2Press
+select door2Open buffer 0 1
+
+sbn doors Door1 Open door1Open
+sbn doors Door2 Open door2Open
+j Start
