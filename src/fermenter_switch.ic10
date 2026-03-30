@@ -1,0 +1,14 @@
+alias fermenter db
+alias valve d0
+alias occupied r0
+alias valveOn r1
+
+Start:
+yield
+ls occupied fermenter 0 Occupied
+seqz valveOn occupied
+s valve Open valveOn
+j Start
+
+
+
