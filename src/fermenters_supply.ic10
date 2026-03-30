@@ -1,0 +1,11 @@
+define valve -1337091041
+alias anyOpen r0
+alias silo d0 
+
+Start:
+yield
+lb anyOpen valve Open Maximum
+s silo Open anyOpen
+
+j Start
+
