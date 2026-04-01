@@ -1,0 +1,31 @@
+alias filter db
+alias pressure r0
+alias ratioCarbonDioxide r1
+alias sufficientPressure r2
+alias insufficientCarbonDioxide r3
+alias modeOn r4
+
+define minPressure 60
+define requiredCarbonDioxide 0.5
+
+
+Start:
+yield
+
+l pressure filter PressureInput
+sgt sufficientPressure pressure minPressure
+
+l ratioCarbonDioxide filter RatioCarbonDioxideInput
+sle insufficientCarbonDioxide ratioCarbonDioxide requiredCarbonDioxide
+
+and modeOn sufficientPressure insufficientCarbonDioxide
+s filter Mode modeOn
+
+j Start
+
+
+
+
+
+
+j Start

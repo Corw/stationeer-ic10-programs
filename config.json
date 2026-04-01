@@ -115,6 +115,12 @@
             "description": "Exported script 'automatic_door.ic10'",
             "src_file": "automatic_door.ic10",
             "script_directory": "Automatic door"
+        },
+        {
+            "name": "Oxygen control",
+            "description": "Exported script 'oxygen_control.ic10'",
+            "src_file": "oxygen_control.ic10",
+            "script_directory": "Oxygen control"
         }
     ]
 }
