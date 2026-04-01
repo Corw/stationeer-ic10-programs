@@ -1,126 +1,128 @@
 alias harv d0
 alias state d1
 alias seedSupply d2
-
-alias buff r0
 alias val r1
 alias reqPlantState r5
 alias step r6
 alias last r7
-
 alias program r10
 alias stateHand r11
 alias statePosition r12
 alias statePlant r13
-
 define CooHome 0
 define CooUnloader 1
 define CooLoader 2
-
 define ProgHarvestSeed 0
 define ProgHarvestPlant 1
 define ProgSeed 2
-
 define AtHome 0
 define AtUnloader 1
 define AtLoader 2
 define AtField 3
 define AtEnd 4
-
 define PlantNone 10
 define PlantGrowing 20
 define PlantMatureSeed 30
 define PlantMature 40
 define PlantDead 50
-
 define ItemEmpty 0
 define ItemOccupied 100
 define ItemFull 200
-# intitialization
 move program ProgHarvestSeed
-move step 1
+move step -1
 move last CooHome
-s harv Setting CooHome
 Start:
 yield
-l buff state Setting
-bltz buff Start
+l r0 state Setting
+bltz r0 Start
 jal DetermineState
-
+s db Setting program
 beq program ProgHarvestSeed ProgramHarvestSeed
 beq program ProgHarvestPlant ProgramHarvestPlant
 beq program ProgSeed ProgramSeed
-
 j Start
-
 DetermineState:
-mod val buff 10
+mod val r0 10
 move statePosition val
-sub buff buff val
-mod val buff 100
+sub r0 r0 val
+mod val r0 100
 move statePlant val
-sub buff buff val
-mod val buff 1000
+sub r0 r0 val
+mod val r0 1000
 move stateHand val
 j ra
-
 ProgramHarvestSeed:
 move reqPlantState PlantMatureSeed
 j ProgramHarvest
-
 ProgramHarvestPlant:
 move reqPlantState PlantMature
 j ProgramHarvest
-
 ProgramHarvest:
 beq statePosition AtHome GoNextAtHome
 beq statePosition AtField DoHarvest
+beq statePosition AtLoader GoStartAtHome
 beq statePosition AtUnloader DoUnloadOrContinue
 beq statePosition AtEnd SwitchProgram
-
 ProgramSeed:
-j Start
-# actions
+beq statePosition AtHome GoNextAtHome
+beq statePosition AtLoader DoLoad
+beq statePosition AtUnloader GoStartAtHome
+beq statePosition AtField DoPlant
+beq statePosition AtEnd SwitchProgram
 GoNext:
 l val harv Setting
 add val val step
 s harv Setting val
 j Start
-
 GoActivate:
 s harv Activate 1
+sleep 1
 j Start
-
 DoHarvest:
 beq stateHand ItemFull DoSavePositionAndGoUnload
 bne statePlant reqPlantState GoNext
 j GoActivate
-
 DoSavePositionAndGoUnload:
 l last harv Setting
 j DoGoUnload
-
 DoGoUnload:
 s harv Setting CooUnloader
 j Start
-
 DoUnloadOrContinue:
-beq stateHand ItemFull GoActivate
+bne stateHand ItemEmpty GoActivate
 s harv Setting last
 j Start
-
 SwitchProgram:
 add program program 1
-sgt buff program ProgSeed
-select program buff ProgHarvestSeed program
+sgt r0 program ProgSeed
+select program r0 ProgHarvestSeed program
 beq stateHand ItemEmpty DoChangeDirectionAndNext
 move last CooHome
 j DoGoUnload
-
 DoChangeDirectionAndNext:
-select step step -1 1
+select step step 1 -1
 j GoNext
-
 GoNextAtHome:
 beq step -1 GoNext
 j SwitchProgram
+DoPlant:
+beq stateHand ItemEmpty DoLoad
+beq statePlant PlantNone GoActivate
+j GoNext
+DoLoad:
+beq statePosition AtLoader DoLoadOrContinue
+beq statePosition AtField DoSavePositionAndGoLoad
+DoSavePositionAndGoLoad:
+l last harv Setting
+j GoLoad
+GoLoad:
+s harv Setting CooLoader
+j Start
+GoStartAtHome:
+move step -1
+s harv Setting CooHome
+j Start
+DoLoadOrContinue:
+beq stateHand ItemEmpty GoActivate
+s harv Setting last
+j Start
