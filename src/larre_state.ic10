@@ -112,10 +112,11 @@ move statePlant PlantDead
 ls val harv Tray Damage
 bnez val ra
 
-# check seeding, under 0 is growing
+# check growth, under 6 is growing
 move statePlant PlantGrowing
-ls val harv Tray Seeding
-bltz val ra
+ls val harv Tray Growth
+blt val 6 ra
 
+ls val harv Tray Seeding
 select statePlant val PlantMatureSeed PlantMature
 j ra
