@@ -121,6 +121,18 @@
             "description": "Exported script 'oxygen_control.ic10'",
             "src_file": "oxygen_control.ic10",
             "script_directory": "Oxygen control"
+        },
+        {
+            "name": "Larre automation2",
+            "description": "Exported script 'larre_automation2.ic10'",
+            "src_file": "larre_automation2.ic10",
+            "script_directory": "Larre automation2"
+        },
+        {
+            "name": "Larre support",
+            "description": "Control larre supporting equiplement (intakes, outputs, stackers)",
+            "src_file": "larre_support.ic10",
+            "script_directory": "Larre support"
         }
     ]
 }
