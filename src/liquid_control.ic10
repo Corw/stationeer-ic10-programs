@@ -1,0 +1,14 @@
+alias analyzer d0
+alias pump d1
+alias liquidPresent r0
+alias pumpOn r1
+define LiquidMax 50
+
+Start:
+yield
+
+l liquidPresent analyzer VolumeOfLiquid
+sge pumpOn liquidPresent LiquidMax
+s pump On pumpOn
+
+j Start

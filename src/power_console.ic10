@@ -1,0 +1,29 @@
+define windturbine -2082355173
+define solarpanel -1545574413
+define display -2041948072
+
+alias windCount r0
+alias solarCount r1
+alias windTotal r2
+alias solarTotal r3
+
+sbn display HASH("WindTotal") Mode DisplayMode.Power
+sbn display HASH("SolarTotal") Mode DisplayMode.Power
+
+Start:
+yield
+
+lb windCount windturbine PrefabHash Sum
+lb solarCount solarpanel PrefabHash Sum
+lb windTotal windturbine PowerGeneration Sum
+lb solarTotal solarpanel Charge Sum
+
+div windCount windCount windturbine
+div solarCount solarCount solarpanel
+
+sbn display HASH("WindCount") Setting windCount
+sbn display HASH("SolarCount") Setting solarCount
+sbn display HASH("WindTotal") Setting windTotal
+sbn display HASH("SolarTotal") Setting solarTotal
+
+j Start

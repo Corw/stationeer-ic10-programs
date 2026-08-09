@@ -1,0 +1,26 @@
+alias purifier d0
+alias analyzer d1
+alias light d2
+alias hasPollutedWater r0
+alias hasCoal r1
+alias purifierOn r2
+
+
+Start:
+yield
+
+l hasPollutedWater analyzer RatioPollutedWater
+sgtz hasPollutedWater hasPollutedWater
+ls hasCoal purifier 0 Occupied
+
+and purifierOn hasPollutedWater hasCoal
+s purifier On purifierOn
+
+bgtz hasCoal Start
+
+s light On 1
+sleep 0.5
+s light On 0
+sleep 0.5
+
+j Start

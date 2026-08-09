@@ -133,6 +133,24 @@
             "description": "Control larre supporting equiplement (intakes, outputs, stackers)",
             "src_file": "larre_support.ic10",
             "script_directory": "Larre support"
+        },
+        {
+            "name": "Liquid control",
+            "description": "Exported script 'liquid_control.ic10'",
+            "src_file": "liquid_control.ic10",
+            "script_directory": "Liquid control"
+        },
+        {
+            "name": "Water purifier control",
+            "description": "Exported script 'water_purifier_control.ic10'",
+            "src_file": "water_purifier_control.ic10",
+            "script_directory": "Water purifier control"
+        },
+        {
+            "name": "Power console",
+            "description": "Exported script 'power_console.ic10'",
+            "src_file": "power_console.ic10",
+            "script_directory": "Power console"
         }
     ]
 }
