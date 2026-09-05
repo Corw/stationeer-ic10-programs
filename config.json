@@ -151,6 +151,18 @@
             "description": "Exported script 'power_console.ic10'",
             "src_file": "power_console.ic10",
             "script_directory": "Power console"
+        },
+        {
+            "name": "Co2 temperature control",
+            "description": "Exported script 'co2_temperature_control.ic10'",
+            "src_file": "co2_temperature_control.ic10",
+            "script_directory": "Co2 temperature control"
+        },
+        {
+            "name": "Igniter control",
+            "description": "Exported script 'igniter_control.ic10'",
+            "src_file": "igniter_control.ic10",
+            "script_directory": "Igniter control"
         }
     ]
 }
