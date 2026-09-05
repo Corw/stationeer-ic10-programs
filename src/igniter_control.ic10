@@ -1,0 +1,20 @@
+alias Igniter d0
+alias Analyzer d1
+
+alias volumeAlcohol r0
+alias volumeMethane r1
+alias volumeCombustible r2
+
+l volumeAlcohol Analyzer RatioLiquidAlcohol
+l volumeMethane Analyzer RatioMethane
+
+select volumeCombustible volumeAlcohol volumeAlcohol volumeMethane
+
+Start:
+yield
+s db Setting volumeCombustible
+blez volumeCombustible Start
+s Igniter Activate 1
+sleep 1
+j Start
+
