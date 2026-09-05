@@ -1,0 +1,31 @@
+# constants
+define Kelvin 273.15
+define TargetTemperature 20 # target temperature in Celsius
+# devices
+alias AnalyzerGas d0
+alias AnalyzerLiquid d1
+alias ValveGas d2
+alias ValveLiquid d3
+# aliases
+alias temperatureGas r0
+alias temperatureLiquid r1
+alias valveLiquidOn r2
+alias valveGasOn r3
+
+Start:
+yield
+# read gas and liquid temperatures
+l temperatureGas AnalyzerGas Temperature
+l temperatureLiquid AnalyzerLiquid Temperature
+# convert to Celsius
+sub temperatureGas temperatureGas Kelvin
+sub temperatureLiquid temperatureLiquid Kelvin
+
+slt valveLiquidOn temperatureLiquid TargetTemperature
+slt valveGasOn temperatureGas TargetTemperature
+
+s ValveLiquid On valveLiquidOn
+s ValveGas On valveGasOn
+
+j Start
+
