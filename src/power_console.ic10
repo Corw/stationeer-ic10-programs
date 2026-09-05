@@ -1,29 +1,78 @@
 define windturbine -2082355173
 define solarpanel -1545574413
+define solararray 1945473703
 define display -2041948072
+define displayLarge -246585138
+define cableAnalyzer 1036015121
+define diode 1829854055
 
 alias windCount r0
 alias solarCount r1
-alias windTotal r2
-alias solarTotal r3
+alias solarArrayCount r2
+alias windTotal r3
+alias solarTotal r4
+alias solarArrayTotal r5
+alias producedTotal r6
+alias availableTotal r7
+alias discrepancy r8
+alias warningOn r9
+
 
 sbn display HASH("WindTotal") Mode DisplayMode.Power
 sbn display HASH("SolarTotal") Mode DisplayMode.Power
+sbn display HASH("SolarArrayTotal") Mode DisplayMode.Power
+sbn displayLarge HASH("ProducedTotal") Mode DisplayMode.Power
+sbn displayLarge HASH("AvailableTotal") Mode DisplayMode.Power
+sbn diode HASH("Discrepancy") Color Color.Red
+sbn diode HASH("Discrepancy") On 0
+
+move warningOn 0
 
 Start:
 yield
 
 lb windCount windturbine PrefabHash Sum
 lb solarCount solarpanel PrefabHash Sum
+lb solarArrayCount solararray PrefabHash Sum
 lb windTotal windturbine PowerGeneration Sum
 lb solarTotal solarpanel Charge Sum
+lb solarArrayTotal solararray Charge Sum
+lbn availableTotal cableAnalyzer HASH("ProductionAnalyzer") PowerActual Sum
 
 div windCount windCount windturbine
 div solarCount solarCount solarpanel
+div solarArrayCount solarArrayCount solararray
+
+add producedTotal solarTotal windTotal
+add producedTotal producedTotal solarArrayTotal
 
 sbn display HASH("WindCount") Setting windCount
 sbn display HASH("SolarCount") Setting solarCount
+sbn display HASH("SolarArrayCount") Setting solarArrayCount
 sbn display HASH("WindTotal") Setting windTotal
 sbn display HASH("SolarTotal") Setting solarTotal
+sbn display HASH("ArrayTotal") Setting solarArrayTotal
+sbn displayLarge HASH("ProducedTotal") Setting producedTotal
+sbn displayLarge HASH("AvailableTotal") Setting availableTotal
 
+sgt discrepancy producedTotal availableTotal
+bgtz discrepancy Blink 
+
+sbn diode HASH("Discrepancy") On 0
+
+j BlinkOff
+
+Blink:
+beqz warningOn BlinkOn
+bnez warningOn BlinkOff
+j Start
+
+BlinkOn:
+move warningOn 1
+sbn diode HASH("Discrepancy") On warningOn
+j Start
+
+BlinkOff:
+move warningOn 0
+sbn diode HASH("Discrepancy") On warningOn
 j Start
