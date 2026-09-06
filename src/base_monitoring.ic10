@@ -16,7 +16,7 @@ define alarm 1922318669
 define diode 688119132
 define gauge -1252835556
 define daylightSensor 1076425094
-define lightDiode 1829854055
+
 
 # devices
 define baseGasSensor HASH("Base Gas Sensor")
@@ -29,11 +29,7 @@ define weatherBase HASH("Weather Station")
 define displayWeather HASH("WeatherDisplay")
 define alarmWeather HASH("WeatherAlarm")
 define diodeWeather HASH("WeatherDiode")
-define diodeBattery20 HASH("Battery_20")
-define diodeBattery40 HASH("Battery_40")
-define diodeBattery60 HASH("Battery_60")
-define diodeBattery80 HASH("Battery_80")
-define diodeBattery100 HASH("Battery_100")
+
 
 sbn display displayRatioOxygen Mode DisplayMode.Percent
 sbn display displayRatioNitrogen Mode DisplayMode.Percent
@@ -41,8 +37,7 @@ sbn display displayRatioCarbonDioxide Mode DisplayMode.Percent
 sbn display displayTemperature Mode DisplayMode.Celsius
 sbn display displayPressure Mode DisplayMode.Pa
 
-sb lightDiode On 0
-sb lightDiode Color Color.Gray
+
 
 move stateWeather -1
 sbn alarm alarmWeather Color Color.Red
