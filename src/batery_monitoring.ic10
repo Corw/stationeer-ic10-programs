@@ -1,0 +1,43 @@
+define battery -1388288459
+define memory -851746783
+
+
+alias potential r1
+alias cumulative r2
+alias points r3
+alias count r4
+alias delta r5
+alias history r6
+
+alias mode r10
+
+move points 3
+
+move count 0
+move cumulative 0
+move delta 0
+move history 0
+
+Start:
+yield
+
+lb mode battery Mode Average
+round mode mode
+
+lb potential battery PowerPotential Average
+add cumulative cumulative potential
+
+sbn memory HASH("BatteryMode") Setting mode
+sbn memory HASH("BatteryDelta") Setting delta
+
+add count count 1
+ble count points Start
+
+move count 0
+sub delta cumulative history
+round delta delta
+move history cumulative
+move cumulative 0
+
+j Start
+
