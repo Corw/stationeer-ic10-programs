@@ -1,0 +1,124 @@
+define lightDiode 1829854055
+define smallDiode 1311586884
+define memory -851746783
+define diodeBattery20 HASH("Battery_20")
+define diodeBattery40 HASH("Battery_40")
+define diodeBattery60 HASH("Battery_60")
+define diodeBattery80 HASH("Battery_80")
+define diodeBattery100 HASH("Battery_100")
+define diodeStatusCharging HASH("Battery_Charging")
+define diodeStatusDischarging HASH("Battery_Discharging")
+sb lightDiode On 0
+sb lightDiode Color Color.Gray
+sb smallDiode On 0
+sb smallDiode Color Color.Gray
+alias mode r0
+alias blink r1
+alias delta r2
+move blink 0
+Start:
+yield
+lbn mode memory HASH("BatteryMode") Setting Average
+lbn delta memory HASH("BatteryDelta") Setting Average
+beq mode 0 Mode0
+beq mode 1 Mode1
+beq mode 2 Mode2
+beq mode 3 Mode3
+beq mode 4 Mode4
+beq mode 5 Mode5
+beq mode 6 Mode6
+ModeEnd:
+bgt delta 1 StatusCharging 
+blt delta -1 StatusDischarging
+j StatusStable
+StatusEnd:
+j Start
+Mode0:
+sb lightDiode On 0
+sb lightDiode Color Color.Gray
+j ModeEnd
+Mode1:
+sbn lightDiode diodeBattery20 On blink
+sbn lightDiode diodeBattery20 Color Color.Red
+sbn lightDiode diodeBattery40 On 0
+sbn lightDiode diodeBattery40 Color Color.Gray
+sbn lightDiode diodeBattery60 On 0
+sbn lightDiode diodeBattery60 Color Color.Gray
+sbn lightDiode diodeBattery80 On 0
+sbn lightDiode diodeBattery80 Color Color.Gray
+sbn lightDiode diodeBattery100 On 0
+sbn lightDiode diodeBattery100 Color Color.Gray
+add blink blink 1
+ble blink 1 Start
+move blink 0
+j ModeEnd
+Mode2:
+sbn lightDiode diodeBattery20 On 1
+sbn lightDiode diodeBattery20 Color Color.Red
+sbn lightDiode diodeBattery40 On 0
+sbn lightDiode diodeBattery40 Color Color.Gray
+sbn lightDiode diodeBattery60 On 0
+sbn lightDiode diodeBattery60 Color Color.Gray
+sbn lightDiode diodeBattery80 On 0
+sbn lightDiode diodeBattery80 Color Color.Gray
+sbn lightDiode diodeBattery100 On 0
+sbn lightDiode diodeBattery100 Color Color.Gray
+j ModeEnd
+Mode3:
+sbn lightDiode diodeBattery20 On 1
+sbn lightDiode diodeBattery20 Color Color.Orange
+sbn lightDiode diodeBattery40 On 1
+sbn lightDiode diodeBattery40 Color Color.Orange
+sbn lightDiode diodeBattery60 On 0
+sbn lightDiode diodeBattery60 Color Color.Gray
+sbn lightDiode diodeBattery80 On 0
+sbn lightDiode diodeBattery80 Color Color.Gray
+sbn lightDiode diodeBattery100 On 0
+sbn lightDiode diodeBattery100 Color Color.Gray
+j ModeEnd
+Mode4:
+sbn lightDiode diodeBattery20 On 1
+sbn lightDiode diodeBattery20 Color Color.Yellow
+sbn lightDiode diodeBattery40 On 1
+sbn lightDiode diodeBattery40 Color Color.Yellow
+sbn lightDiode diodeBattery60 On 1
+sbn lightDiode diodeBattery60 Color Color.Yellow
+sbn lightDiode diodeBattery80 On 0
+sbn lightDiode diodeBattery80 Color Color.Gray
+sbn lightDiode diodeBattery100 On 0
+sbn lightDiode diodeBattery100 Color Color.Gray
+j ModeEnd
+Mode5:
+sbn lightDiode diodeBattery20 On 1
+sbn lightDiode diodeBattery20 Color Color.Green
+sbn lightDiode diodeBattery40 On 1
+sbn lightDiode diodeBattery40 Color Color.Green
+sbn lightDiode diodeBattery60 On 1
+sbn lightDiode diodeBattery60 Color Color.Green
+sbn lightDiode diodeBattery80 On 1
+sbn lightDiode diodeBattery80 Color Color.Green
+sbn lightDiode diodeBattery100 On 0
+sbn lightDiode diodeBattery100 Color Color.Gray
+j ModeEnd
+Mode6:
+sb lightDiode On 1
+sb lightDiode Color Color.Blue
+j ModeEnd
+StatusCharging:
+sbn smallDiode diodeStatusCharging On 1
+sbn smallDiode diodeStatusCharging Color Color.Green
+sbn smallDiode diodeStatusDischarging On 0
+sbn smallDiode diodeStatusDischarging Color Color.Gray
+j StatusEnd
+StatusDischarging:
+sbn smallDiode diodeStatusCharging On 0
+sbn smallDiode diodeStatusCharging Color Color.Gray
+sbn smallDiode diodeStatusDischarging On 1
+sbn smallDiode diodeStatusDischarging Color Color.Red
+j StatusEnd
+StatusStable:
+sbn smallDiode diodeStatusCharging On 0
+sbn smallDiode diodeStatusCharging Color Color.Gray
+sbn smallDiode diodeStatusDischarging On 0
+sbn smallDiode diodeStatusDischarging Color Color.Gray
+j StatusEnd
