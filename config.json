@@ -163,6 +163,18 @@
             "description": "Exported script 'igniter_control.ic10'",
             "src_file": "igniter_control.ic10",
             "script_directory": "Igniter control"
+        },
+        {
+            "name": "Batery monitoring",
+            "description": "Exported script 'batery_monitoring.ic10'",
+            "src_file": "batery_monitoring.ic10",
+            "script_directory": "Batery monitoring"
+        },
+        {
+            "name": "Battery display",
+            "description": "Exported script 'battery_display.ic10'",
+            "src_file": "battery_display.ic10",
+            "script_directory": "Battery display"
         }
     ]
 }
