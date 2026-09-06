@@ -13,9 +13,9 @@ define display -246585138
 define gasSensor -1252983604
 define weatherStation 1997212478
 define alarm 1922318669
-define diode 688119132
 define gauge -1252835556
 define daylightSensor 1076425094
+define flashingLight -1535893860
 
 
 # devices
@@ -29,7 +29,7 @@ define weatherBase HASH("Weather Station")
 define displayWeather HASH("WeatherDisplay")
 define alarmWeather HASH("WeatherAlarm")
 define diodeWeather HASH("WeatherDiode")
-
+define flashingLightWeather HASH("WeatherFlashingLight")
 
 sbn display displayRatioOxygen Mode DisplayMode.Percent
 sbn display displayRatioNitrogen Mode DisplayMode.Percent
@@ -79,23 +79,27 @@ sbn display displayWeather Mode DisplayMode.String
 sbn display displayWeather Setting STR("Clear")
 sbn display displayWeather Color Color.Green
 
-sbn diode diodeWeather Color Color.Gray
-sbn diode diodeWeather On 0
+sb diodeWeather Color Color.Gray
+sb diodeWeather On 0
 sbn alarm alarmWeather On 0
+
+sbn flashingLight flashingLightWeather On 0
 j Start
 
 WeatherStormIncoming:
 sbn display displayWeather Mode DisplayMode.Minutes
 sbn display displayWeather Color Color.Red
-sbn diode diodeWeather On 1
+sb diodeWeather On 1
 sbn alarm alarmWeather On 1
+
+sbn flashingLight flashingLightWeather On 1
 j StormIncomingUpdate
 
 WeatherStormStart:
 sbn display displayWeather Mode DisplayMode.String
 sbn display displayWeather Setting STR("Storm!")
 sbn display displayWeather Color Color.Yellow
-sbn diode diodeWeather Color Color.Yellow
+sb diodeWeather Color Color.Yellow
 j Start
 
 StormIncomingUpdate:
@@ -108,6 +112,6 @@ floor buffer buffer
 sbn display displayWeather Setting buffer
 
 select buffer weatherFlag Color.White Color.Yellow
-sbn diode diodeWeather Color buffer
+sb diodeWeather Color buffer
 
 j Start
