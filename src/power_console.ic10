@@ -55,6 +55,9 @@ sbn display HASH("ArrayTotal") Setting solarArrayTotal
 sbn displayLarge HASH("ProducedTotal") Setting producedTotal
 sbn displayLarge HASH("AvailableTotal") Setting availableTotal
 
+round producedTotal producedTotal
+round availableTotal availableTotal
+
 sgt discrepancy producedTotal availableTotal
 bgtz discrepancy Blink 
 
