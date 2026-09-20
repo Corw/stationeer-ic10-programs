@@ -1,0 +1,22 @@
+define Kelvin 273.15
+
+alias analyzer d0
+alias valve d1
+alias memory d2
+
+alias current r0
+alias target r1
+alias on r2
+
+
+Start:
+yield
+
+l current analyzer Temperature
+sub current current Kelvin
+l target memory Setting
+
+sgt on current target
+s valve On on
+
+j Start

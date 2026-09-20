@@ -175,6 +175,12 @@
             "description": "Exported script 'battery_display.ic10'",
             "src_file": "battery_display.ic10",
             "script_directory": "Battery display"
+        },
+        {
+            "name": "Pipe cooling control",
+            "description": "Exported script 'pipe_cooling_control.ic10'",
+            "src_file": "pipe_cooling_control.ic10",
+            "script_directory": "Pipe cooling control"
         }
     ]
 }
