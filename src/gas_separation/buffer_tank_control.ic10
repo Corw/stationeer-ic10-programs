@@ -95,6 +95,9 @@ add stateBuffer stateTank stateValves
 seq value stateBuffer 3
 select stateBuffer value BufferReady stateBuffer
 
+beq stateBuffer BufferDrained ValvesClose
+beq stateBuffer BufferFilled ValvesClose
+
 # cycling trough tanks
 add counter counter 1
 blt counter 2 Start
@@ -102,7 +105,6 @@ move counter 0
 # we have states of both tanks and valves sets
 
 j Start
-
 
 ValvesClose:
 sbn valve valveFill On 0
