@@ -67,20 +67,16 @@ alias stateValves r21
 j Checks
 
 Checks:
-
 lbn pressure gasSensor tankSensor Pressure Average
 lbn valveFilling valve valveFill On Average
 lbn valveDraining valve valveDrain On Average
 
 # determine state of pressure
 move stateTank TankPartial
-
 seq value pressure 0
 select stateTank value TankEmpty stateTank
-
 sge value pressure maxPressure
 select stateTank value TankMaxed stateTank
-
 sge value pressure criticalPressure
 select stateTank value TankCritical stateTank
 
@@ -88,11 +84,14 @@ select stateTank value TankCritical stateTank
 mul value valveDraining 2
 add stateValves value valveFilling
 
+# valve error handling
 beq stateValves ValvesError ValvesClose
 
+# cycling trough tan
 add counter counter 1
 blt counter 2 Start
 move counter 0
+# we have states of both tanks and valves sets
 
 j Start
 
