@@ -87,7 +87,7 @@ add stateValves value valveFilling
 # valve error handling
 beq stateValves ValvesError ValvesClose
 
-# cycling trough tan
+# cycling trough tanks
 add counter counter 1
 blt counter 2 Start
 move counter 0
