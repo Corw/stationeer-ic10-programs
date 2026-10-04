@@ -1,0 +1,102 @@
+
+# device types
+define gasSensor -1252983604
+define memory -851746783
+define valve -1280984102
+
+# values
+define maxPressure 49000
+define criticalPressure 50000
+
+# states of tank
+define TankEmpty 0
+define TankPartial 1
+define TankMaxed 2
+define TankCritical 3 # valve or control failure
+
+# states of valves
+define ValvesClosed 0
+define ValvesFilling 1
+define ValvesDraining 2
+define ValvesError 3
+
+# states of buffer
+define BufferEmpty 0 # no tanks full
+define BufferReady 1 # at least one tank full
+define BufferFull 2 # all tanks full
+
+# variables
+alias pressure r0
+alias valveFilling r1
+alias valveDraining r2
+
+alias stateTank1 r10
+alias stateValves1 r11
+alias stateTank2 r20
+alias stateValves2 r21
+
+alias value r7
+alias counter r8
+alias activeTank r9
+
+move counter 0
+move activeTank 0
+
+Start:
+yield
+
+beq counter 0 FirstTankCheck
+beq counter 1 SecondTankCheck
+
+FirstTankCheck:
+# devices
+define tankSensor HASH("Tank 1 Analyzer")
+define valveFill HASH("Tank 1 Fill Valve")
+define valveDrain HASH("Tank 1 Drain Valve")
+alias stateTank r10
+alias stateValves r11
+j Checks
+
+SecondTankCheck:
+# devices
+define tankSensor HASH("Tank 2 Analyzer")
+define valveFill HASH("Tank 2 Fill Valve")
+define valveDrain HASH("Tank 2 Drain Valve")
+alias stateTank r20
+alias stateValves r21
+j Checks
+
+Checks:
+
+lbn pressure gasSensor tankSensor Pressure Average
+lbn valveFilling valve valveFill On Average
+lbn valveDraining valve valveDrain On Average
+
+# determine state of pressure
+move stateTank TankPartial
+
+seq value pressure 0
+select stateTank value TankEmpty stateTank
+
+sge value pressure maxPressure
+select stateTank value TankMaxed stateTank
+
+sge value pressure criticalPressure
+select stateTank value TankCritical stateTank
+
+# determine state of valves
+mul value valveDraining 2
+add stateValves value valveFilling
+
+beq stateValves ValvesError ValvesClose
+
+add counter counter 1
+blt counter 2 Start
+move counter 0
+
+j Start
+
+ValvesClose:
+sbn valve valveFill On 0
+sbn valve valveDrain On 0
+j Start
