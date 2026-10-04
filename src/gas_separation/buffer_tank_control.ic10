@@ -9,10 +9,10 @@ define maxPressure 49000
 define criticalPressure 50000
 
 # states of tank
-define TankEmpty 0
-define TankPartial 1
-define TankMaxed 2
-define TankCritical 3 # valve or control failure
+define TankEmpty   0
+define TankPartial 3
+define TankMaxed   6
+define TankCritical 9 # valve or control failure
 
 # states of valves
 define ValvesClosed 0
@@ -20,10 +20,14 @@ define ValvesFilling 1
 define ValvesDraining 2
 define ValvesError 3
 
-# states of buffer
-define BufferEmpty 0 # no tanks full
-define BufferReady 1 # at least one tank full
-define BufferFull 2 # all tanks full
+# state of buffer system
+define BufferReady 0
+define BufferDrained 1
+define BufferDraining 2
+define BufferFilled 3
+define BufferFilling 4
+define BufferFull 5
+
 
 # variables
 alias pressure r0
@@ -32,13 +36,20 @@ alias valveDraining r2
 
 alias stateTank1 r10
 alias stateValves1 r11
+alias stateBuffer1 r12
 alias stateTank2 r20
 alias stateValves2 r21
+alias stateBuffer2 r22
 
 alias value r30
 alias counter r31
 alias activeTank r32
 alias activeCommand r33
+
+alias stateActiveTank r40
+alias stateActiveValves r41
+alias stateInactiveTank r42
+alias stateInactiveValves r43
 
 move counter 0
 move activeTank 0
@@ -56,6 +67,7 @@ define valveFill HASH("Tank 1 Fill Valve")
 define valveDrain HASH("Tank 1 Drain Valve")
 alias stateTank r10
 alias stateValves r11
+alias stateBuffer r12
 j Checks
 
 SecondTankCheck:
@@ -65,6 +77,7 @@ define valveFill HASH("Tank 2 Fill Valve")
 define valveDrain HASH("Tank 2 Drain Valve")
 alias stateTank r20
 alias stateValves r21
+alias stateBuffer r22
 j Checks
 
 Checks:
@@ -88,6 +101,14 @@ add stateValves value valveFilling
 # valve error handling
 beq stateValves ValvesError ValvesClose
 
+# determine state of buffer system
+mul value stateTank 3
+add stateBuffer value stateValves
+
+# correction for partial and closed
+seq value stateBuffer 3
+select stateBuffer value BufferReady stateBuffer
+
 # cycling trough tanks
 add counter counter 1
 blt counter 2 Start
@@ -97,6 +118,9 @@ move counter 0
 j Start
 
 bgtzal sp GetLastCommand
+j SetStatePointers
+
+bge rr40 TankMaxed DoActiveMaxed
 
 ValvesClose:
 sbn valve valveFill On 0
@@ -107,3 +131,12 @@ GetLastCommand:
 pop activeCommand
 move sp 0
 j ra
+
+SetStatePointers:
+select stateActiveTank activeTank 20 10
+select stateActiveValves activeTank 21 11
+select stateInactiveTank activeTank 10 20
+select stateInactiveValves activeTank 11 21
+j ra
+
+DoActiveMaxed:
