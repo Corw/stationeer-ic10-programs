@@ -1,9 +1,5 @@
-define gasSensor -1252983604
 define memory -851746783
-define valve -1280984102
 define alarm -2107840748
-define valveFillFirst HASH("Tank 1 Fill Valve")
-define valveFillSecond HASH("Tank 2 Fill Valve")
 define memoryAvailability HASH("Memory Buffer Availability")
 define alarmCritical HASH("Overpressure Alarm")
 # values
@@ -40,29 +36,33 @@ move current 0
 move stateBuffer1 -1
 move stateBuffer2 -1
 sbn alarm alarmCritical On 0
+lbn r10 -1280984102 HASH("Tank 1 Fill Valve") ReferenceId Maximum
+lbn r11 -1280984102 HASH("Tank 2 Fill Valve") ReferenceId Maximum
+lbn r12 -1280984102 HASH("Tank 1 Drain Valve") ReferenceId Maximum
+lbn r13 -1280984102 HASH("Tank 2 Drain Valve") ReferenceId Maximum
+lbn r14 435685051 HASH("Tank 1 Analyzer") ReferenceId Maximum
+lbn r15 435685051 HASH("Tank 2 Analyzer") ReferenceId Maximum
 Start:
 yield
 beq current 0 FirstTankCheck
 beq current 1 SecondTankCheck
 FirstTankCheck:
-# devices
-define tankSensor HASH("Tank 1 Analyzer")
-define valveFill valveFillFirst
-define valveDrain HASH("Tank 1 Drain Valve")
+alias tankSensor r14
+alias valveFill r10
+alias valveDrain r12
 alias stateBuffer r3
 alias otherBuffer r4
 j Checks
 SecondTankCheck:
-# devices
-define tankSensor HASH("Tank 2 Analyzer")
-define valveFill valveFillSecond
-define valveDrain HASH("Tank 2 Drain Valve")
+alias tankSensor r15
+alias valveFill r11
+alias valveDrain r13
 alias stateBuffer r4
 alias otherBuffer r3
 j Checks
 Checks:
 # determine state of pressure
-lbn reading gasSensor tankSensor Pressure Average
+l reading tankSensor Pressure
 move stateTank TankPartial
 seq value reading 0
 select stateTank value TankEmpty stateTank
@@ -71,9 +71,9 @@ select stateTank value TankMaxed stateTank
 sge value reading criticalPressure
 select stateTank value TankCritical stateTank
 # determine state of valves
-lbn reading valve valveDrain On Average
+l reading valveDrain On
 mul value reading 2
-lbn reading valve valveFill On Average
+l reading valveFill On
 add stateValves value reading
 # valve error handling
 beq stateValves ValvesError ValvesClose
@@ -101,27 +101,27 @@ sbn memory memoryAvailability Setting value
 j Start
 
 ValvesClose:
-sbn valve valveFill On 0
-sbn valve valveDrain On 0
+s  valveFill On 0
+s  valveDrain On 0
 j Start
 OnDrained:
 # close drain valve and if other tank is not filling, start filling
-sbn valve valveDrain On 0
+s  valveDrain On 0
 beq otherBuffer BufferFilling Start
-sbn valve valveFill On 1
+s  valveFill On 1
 j Start
 OnFilled:
 # close fill valve and if other tank is ready, fill it
-sbn valve valveFill On 0
+s  valveFill On 0
 bne otherBuffer BufferReady Start
 beq current 0 OpenSecondTank
 beq current 1 OpenFirstTank 
 j Start
 OpenFirstTank:
-sbn valve valveFillFirst On 1
+sb r10 On 1
 j Start
 OpenSecondTank:
-sbn valve valveFillSecond On 1
+sb r11 On 1
 j Start
 OnTankCritical:
 sbn alarm alarmCritical On 1
