@@ -35,9 +35,10 @@ alias stateValves1 r11
 alias stateTank2 r20
 alias stateValves2 r21
 
-alias value r7
-alias counter r8
-alias activeTank r9
+alias value r30
+alias counter r31
+alias activeTank r32
+alias activeCommand r33
 
 move counter 0
 move activeTank 0
@@ -95,7 +96,14 @@ move counter 0
 
 j Start
 
+bgtzal sp GetLastCommand
+
 ValvesClose:
 sbn valve valveFill On 0
 sbn valve valveDrain On 0
 j Start
+
+GetLastCommand:
+pop activeCommand
+move sp 0
+j ra
