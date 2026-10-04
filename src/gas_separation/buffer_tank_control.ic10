@@ -114,26 +114,8 @@ move counter 0
 
 j Start
 
-bgtzal sp GetLastCommand
-j SetStatePointers
-
-bge rr40 TankMaxed DoActiveMaxed
 
 ValvesClose:
 sbn valve valveFill On 0
 sbn valve valveDrain On 0
 j Start
-
-GetLastCommand:
-pop activeCommand
-move sp 0
-j ra
-
-SetStatePointers:
-select stateActiveTank activeTank 20 10
-select stateActiveValves activeTank 21 11
-select stateInactiveTank activeTank 10 20
-select stateInactiveValves activeTank 11 21
-j ra
-
-DoActiveMaxed:
