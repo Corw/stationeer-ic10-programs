@@ -124,3 +124,8 @@ OpenFirstTank:
 sbn valve valveFillFirst On 1
 move activeTank 0
 j Start
+
+OpenSecondTank:
+sbn valve valveFillSecond On 1
+move activeTank 1
+j Start
