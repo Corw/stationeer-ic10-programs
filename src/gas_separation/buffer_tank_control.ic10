@@ -21,12 +21,12 @@ define ValvesDraining 2
 define ValvesError 3
 
 # state of buffer system
-define BufferReady 0
-define BufferDrained 1
-define BufferDraining 2
-define BufferFilled 3
-define BufferFilling 4
-define BufferFull 5
+define BufferReady    0
+define BufferDrained  2
+define BufferDraining 5
+define BufferFilled   7
+define BufferFilling  4
+define BufferFull     6
 
 
 # variables
@@ -102,8 +102,7 @@ add stateValves value valveFilling
 beq stateValves ValvesError ValvesClose
 
 # determine state of buffer system
-mul value stateTank 3
-add stateBuffer value stateValves
+add stateBuffer stateTank stateValves
 
 # correction for partial and closed
 seq value stateBuffer 3
