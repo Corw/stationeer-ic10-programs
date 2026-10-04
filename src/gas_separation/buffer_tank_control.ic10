@@ -1,11 +1,11 @@
-# device types
 define gasSensor -1252983604
 define memory -851746783
 define valve -1280984102
-# devices
+define alarm -2107840748
 define valveFillFirst HASH("Tank 1 Fill Valve")
 define valveFillSecond HASH("Tank 2 Fill Valve")
 define memoryAvailability HASH("Memory Buffer Availability")
+define alarmCritical HASH("Overpressure Alarm")
 # values
 define maxPressure 49000
 define criticalPressure 50000
@@ -39,6 +39,7 @@ alias activeTank r7
 move current 0
 move stateBuffer1 -1
 move stateBuffer2 -1
+sbn alarm alarmCritical On 0
 Start:
 yield
 beq current 0 FirstTankCheck
@@ -76,6 +77,7 @@ lbn reading valve valveFill On Average
 add stateValves value reading
 # valve error handling
 beq stateValves ValvesError ValvesClose
+beq stateTank TankCritical OnTankCritical
 # determine state of buffer system
 add stateBuffer stateTank stateValves
 # correction for partial and closed
@@ -120,4 +122,7 @@ sbn valve valveFillFirst On 1
 j Start
 OpenSecondTank:
 sbn valve valveFillSecond On 1
+j Start
+OnTankCritical:
+sbn alarm alarmCritical On 1
 j Start
