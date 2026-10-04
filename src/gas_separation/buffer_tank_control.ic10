@@ -30,9 +30,7 @@ define BufferFull     6
 
 
 # variables
-alias pressure r0
-alias valveFilling r1
-alias valveDraining r2
+alias reading r0
 
 alias stateTank1 r10
 alias stateValves1 r11
@@ -81,22 +79,22 @@ alias stateBuffer r22
 j Checks
 
 Checks:
-lbn pressure gasSensor tankSensor Pressure Average
-lbn valveFilling valve valveFill On Average
-lbn valveDraining valve valveDrain On Average
 
 # determine state of pressure
+lbn reading gasSensor tankSensor Pressure Average
 move stateTank TankPartial
-seq value pressure 0
+seq value reading 0
 select stateTank value TankEmpty stateTank
-sge value pressure maxPressure
+sge value reading maxPressure
 select stateTank value TankMaxed stateTank
-sge value pressure criticalPressure
+sge value reading criticalPressure
 select stateTank value TankCritical stateTank
 
 # determine state of valves
-mul value valveDraining 2
-add stateValves value valveFilling
+lbn reading valve valveDrain On Average
+mul value reading 2
+lbn reading valve valveFill On Average
+add stateValves value reading
 
 # valve error handling
 beq stateValves ValvesError ValvesClose
