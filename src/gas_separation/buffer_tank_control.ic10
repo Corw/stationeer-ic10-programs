@@ -28,6 +28,9 @@ define BufferFilled   7
 define BufferFilling  4
 define BufferFull     6
 
+# states of buffer system with both tanks
+define Unavailable 0
+define Available 1
 
 # variables
 alias reading r0
