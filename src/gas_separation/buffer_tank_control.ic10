@@ -26,9 +26,6 @@ define BufferDraining 5
 define BufferFilled   7
 define BufferFilling  4
 define BufferFull     6
-# states of buffer system with both tanks
-define Unavailable 0
-define Available 1
 # variables
 alias reading r0
 alias stateTank r1
@@ -94,7 +91,10 @@ move current 0
 # we have states of both tanks and valves sets
 add value stateBuffer1 stateBuffer2
 beqz value OpenFirstTank
-seq value value 12 # check both tanks are full
+
+seq value stateBuffer1 BufferFilling
+seq reading stateBuffer2 BufferFilling
+or value value reading
 sbn memory memoryAvailability Setting value
 j Start
 
@@ -102,14 +102,12 @@ ValvesClose:
 sbn valve valveFill On 0
 sbn valve valveDrain On 0
 j Start
-
 OnDrained:
 # close drain valve and if other tank is not filling, start filling
 sbn valve valveDrain On 0
 beq otherBuffer BufferFilling Start
 sbn valve valveFill On 1
 j Start
-
 OnFilled:
 # close fill valve and if other tank is ready, fill it
 sbn valve valveFill On 0
@@ -117,11 +115,9 @@ bne otherBuffer BufferReady Start
 beq current 0 OpenSecondTank
 beq current 1 OpenFirstTank 
 j Start
-
 OpenFirstTank:
 sbn valve valveFillFirst On 1
 j Start
-
 OpenSecondTank:
 sbn valve valveFillSecond On 1
 j Start
