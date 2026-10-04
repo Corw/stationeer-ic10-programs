@@ -32,22 +32,15 @@ define BufferFull     6
 # variables
 alias reading r0
 
-alias stateTank1 r10
-alias stateValves1 r11
-alias stateBuffer1 r12
-alias stateTank2 r20
-alias stateValves2 r21
-alias stateBuffer2 r22
+alias stateTank r1
+alias stateValves r2
 
-alias value r30
-alias counter r31
-alias activeTank r32
-alias activeCommand r33
+alias stateBuffer1 r3
+alias stateBuffer2 r4
 
-alias stateActiveTank r40
-alias stateActiveValves r41
-alias stateInactiveTank r42
-alias stateInactiveValves r43
+alias value r5
+alias counter r6
+alias activeTank r7
 
 move counter 0
 move activeTank 0
@@ -63,9 +56,7 @@ FirstTankCheck:
 define tankSensor HASH("Tank 1 Analyzer")
 define valveFill HASH("Tank 1 Fill Valve")
 define valveDrain HASH("Tank 1 Drain Valve")
-alias stateTank r10
-alias stateValves r11
-alias stateBuffer r12
+alias stateBuffer r3
 j Checks
 
 SecondTankCheck:
@@ -73,9 +64,7 @@ SecondTankCheck:
 define tankSensor HASH("Tank 2 Analyzer")
 define valveFill HASH("Tank 2 Fill Valve")
 define valveDrain HASH("Tank 2 Drain Valve")
-alias stateTank r20
-alias stateValves r21
-alias stateBuffer r22
+alias stateBuffer r4
 j Checks
 
 Checks:
