@@ -4,6 +4,9 @@ define gasSensor -1252983604
 define memory -851746783
 define valve -1280984102
 
+define valveFillFirst HASH("Tank 1 Fill Valve")
+define valveFillSecond HASH("Tank 2 Fill Valve")
+
 # values
 define maxPressure 49000
 define criticalPressure 50000
@@ -57,7 +60,7 @@ beq counter 1 SecondTankCheck
 FirstTankCheck:
 # devices
 define tankSensor HASH("Tank 1 Analyzer")
-define valveFill HASH("Tank 1 Fill Valve")
+define valveFill valveFillFirst
 define valveDrain HASH("Tank 1 Drain Valve")
 alias stateBuffer r3
 j Checks
@@ -65,7 +68,7 @@ j Checks
 SecondTankCheck:
 # devices
 define tankSensor HASH("Tank 2 Analyzer")
-define valveFill HASH("Tank 2 Fill Valve")
+define valveFill valveFillSecond
 define valveDrain HASH("Tank 2 Drain Valve")
 alias stateBuffer r4
 j Checks
@@ -107,9 +110,17 @@ blt counter 2 Start
 move counter 0
 # we have states of both tanks and valves sets
 
+add value stateBuffer1 stateBuffer2
+beqz value OpenFirstTank
+
 j Start
 
 ValvesClose:
 sbn valve valveFill On 0
 sbn valve valveDrain On 0
+j Start
+
+OpenFirstTank:
+sbn valve valveFill On 1
+move activeTank 0
 j Start
