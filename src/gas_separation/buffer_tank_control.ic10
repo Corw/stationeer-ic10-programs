@@ -121,6 +121,6 @@ sbn valve valveDrain On 0
 j Start
 
 OpenFirstTank:
-sbn valve valveFill On 1
+sbn valve valveFillFirst On 1
 move activeTank 0
 j Start
