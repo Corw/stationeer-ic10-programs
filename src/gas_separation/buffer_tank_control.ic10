@@ -75,13 +75,10 @@ l reading valveDrain On
 mul value reading 2
 l reading valveFill On
 add stateValves value reading
-# valve error handling
-beq stateValves ValvesError ValvesClose
+beq stateValves ValvesError ValvesClose # valve error handling
 beq stateTank TankCritical OnTankCritical
-# determine state of buffer system
-add stateBuffer stateTank stateValves
-# correction for partial and closed
-seq value stateBuffer 3
+add stateBuffer stateTank stateValves # determine state of buffer system
+seq value stateBuffer 3 # correction for partial and closed
 select stateBuffer value BufferReady stateBuffer
 
 beq stateBuffer BufferDrained OnDrained
@@ -93,11 +90,13 @@ move current 0
 # we have states of both tanks and valves sets
 add value stateBuffer1 stateBuffer2
 beqz value OpenFirstTank
-
 seq value stateBuffer1 BufferFilling
 seq reading stateBuffer2 BufferFilling
 or value value reading
 sbn memory memoryAvailability Setting value
+mul value stateBuffer2 10
+add value stateBuffer1 value
+s db Setting value 
 j Start
 
 ValvesClose:
