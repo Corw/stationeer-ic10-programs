@@ -89,8 +89,8 @@ mul value stateBuffer2 10
 add value stateBuffer1 value
 s db Setting value 
 get value db 0
-beqal value 1 OpenDrain1
-beqal value 2 OpenDrain2
+beq value 1 OpenDrain1
+beq value 2 OpenDrain2
 j Start
 ValvesClose:
 s  valveFill On 0
@@ -121,8 +121,8 @@ j Start
 OpenDrain1:
 sbn -1280984102 HASH("Tank 1 Drain Valve") On 1
 put db 0 0
-j ra
+j Start
 OpenDrain2:
 sbn -1280984102 HASH("Tank 2 Drain Valve") On 1
 put db 0 0
-j ra
+j Start
