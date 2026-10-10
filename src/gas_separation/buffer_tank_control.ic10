@@ -117,10 +117,10 @@ beq current 0 OpenSecondTank
 beq current 1 OpenFirstTank 
 j Start
 OpenFirstTank:
-sb r10 On 1
+sb r11 On 1
 j Start
 OpenSecondTank:
-sb r11 On 1
+sb r14 On 1
 j Start
 OnTankCritical:
 sbn alarm alarmCritical On 1
