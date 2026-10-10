@@ -22,7 +22,7 @@ alias memoryCanTake r9
 
 move state StateFilling
 s memoryCanGive Setting 0
-s memoryCanTake Setting 0
+s memoryCanTake Setting 1
 
 Start:
 yield
