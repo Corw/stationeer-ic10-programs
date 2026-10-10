@@ -36,27 +36,27 @@ move current 0
 move stateBuffer1 -1
 move stateBuffer2 -1
 sbn alarm alarmCritical On 0
-lbn r10 -1280984102 HASH("Tank 1 Fill Valve") ReferenceId Maximum
-lbn r11 -1280984102 HASH("Tank 2 Fill Valve") ReferenceId Maximum
+lbn r10 435685051 HASH("Tank 1 Analyzer") ReferenceId Maximum
+lbn r11 -1280984102 HASH("Tank 1 Fill Valve") ReferenceId Maximum
 lbn r12 -1280984102 HASH("Tank 1 Drain Valve") ReferenceId Maximum
-lbn r13 -1280984102 HASH("Tank 2 Drain Valve") ReferenceId Maximum
-lbn r14 435685051 HASH("Tank 1 Analyzer") ReferenceId Maximum
-lbn r15 435685051 HASH("Tank 2 Analyzer") ReferenceId Maximum
+lbn r13 435685051 HASH("Tank 2 Analyzer") ReferenceId Maximum
+lbn r14 -1280984102 HASH("Tank 2 Fill Valve") ReferenceId Maximum
+lbn r15 -1280984102 HASH("Tank 2 Drain Valve") ReferenceId Maximum
 Start:
 yield
 beq current 0 FirstTankCheck
 beq current 1 SecondTankCheck
 FirstTankCheck:
-alias tankSensor r14
-alias valveFill r10
+alias tankSensor r10
+alias valveFill r11
 alias valveDrain r12
 alias stateBuffer r3
 alias otherBuffer r4
 j Checks
 SecondTankCheck:
-alias tankSensor r15
-alias valveFill r11
-alias valveDrain r13
+alias tankSensor r13
+alias valveFill r14
+alias valveDrain r15
 alias stateBuffer r4
 alias otherBuffer r3
 j Checks
