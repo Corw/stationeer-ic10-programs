@@ -3,6 +3,7 @@ define alarm -2107840748
 define memoryAvailability HASH("Memory Buffer Availability")
 define alarmCritical HASH("Overpressure Alarm")
 # values
+define minPressure 1000
 define maxPressure 48000
 define criticalPressure 50000
 # states of tank
@@ -63,7 +64,7 @@ Checks:
 # determine state of pressure
 l reading tankSensor Pressure
 move stateTank TankPartial
-seq value reading 0
+sle value reading minPressure
 select stateTank value TankEmpty stateTank
 sge value reading maxPressure
 select stateTank value TankMaxed stateTank
