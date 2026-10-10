@@ -1,0 +1,99 @@
+lbn r0 2037291645 HASH("Tank Control") ReferenceId Maximum
+lbn r1 -851746783 HASH("Memory Can Take") ReferenceId Maximum
+lbn r2 1310794736 HASH("Pump") ReferenceId Maximum
+
+define StateIdle 0
+define StateGettingSupply 1
+define StateWaitingSupply 2
+define StateProvidingSupply 3
+
+define BufferDraining 5
+define BufferFull     6
+
+alias chip r0
+alias canTake r1
+alias pump r2
+alias state r3
+alias value r4
+alias tank1 r5
+alias tank2 r6
+
+move state StateIdle
+
+Start:
+yield
+
+s db Setting state
+
+beq state StateIdle DoCheckDemand
+beq state StateGettingSupply DoGetSupply
+beq state StateWaitingSupply DoCheckSupplyReady
+beq state StateProvidingSupply DoCheckSupply
+
+j Start
+
+DoCheckDemand:
+l value canTake Setting
+beqz value MoveToIdle # no supply needed
+j MoveToGettingSupply
+
+DoGetSupply:
+l value canTake Setting
+beqz value MoveToIdle # no supply needed
+
+jal ReadTankStates
+beq tank1 BufferDraining MoveToProviding
+beq tank2 BufferDraining MoveToProviding
+
+beq tank1 BufferFull MoveToWatingOn1
+beq tank2 BufferFull MoveToWatingOn2
+j Start # stay in state and wait for supply
+
+DoCheckSupplyReady:
+l value canTake Setting
+beqz value MoveToIdle # no supply needed
+jal ReadTankStates
+beq tank1 BufferDraining MoveToProviding
+beq tank2 BufferDraining MoveToProviding
+j Start # stay in state and wait supply
+
+DoCheckSupply:
+l value canTake Setting
+beqz value MoveToIdle # no supply needed
+jal ReadTankStates
+beq tank1 BufferDraining Start # juice flowing, stay in state
+beq tank2 BufferDraining Start # juice flowing, stay in state
+j MoveToGettingSupply # supply closed, request more
+
+ReadTankStates:
+l value chip Setting
+div tank1 value 10
+trunc tank1 tank1
+mod tank2 value 10
+j ra
+
+MoveToIdle:
+move state StateIdle
+s pump On 0
+j Start
+
+MoveToProviding:
+move state StateProvidingSupply
+s pump On 1
+j Start
+
+MoveToWatingOn1:
+move state StateWaitingSupply
+put chip 0 1
+j Start
+
+MoveToWatingOn2:
+move state StateWaitingSupply
+put chip 0 2
+j Start
+
+MoveToGettingSupply:
+move state StateGettingSupply
+s pump On 0
+j start
+
