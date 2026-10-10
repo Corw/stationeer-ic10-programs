@@ -3,7 +3,7 @@ define alarm -2107840748
 define memoryAvailability HASH("Memory Buffer Availability")
 define alarmCritical HASH("Overpressure Alarm")
 # values
-define maxPressure 49000
+define maxPressure 48000
 define criticalPressure 50000
 # states of tank
 define TankEmpty   0
