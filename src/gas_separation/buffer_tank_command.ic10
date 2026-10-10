@@ -67,9 +67,9 @@ j MoveToGettingSupply # supply closed, request more
 
 ReadTankStates:
 l value chip Setting
-div tank1 value 10
-trunc tank1 tank1
-mod tank2 value 10
+div tank2 value 10
+trunc tank2 tank2
+mod tank1 value 10
 j ra
 
 MoveToIdle:
