@@ -45,8 +45,8 @@ jal ReadTankStates
 beq tank1 BufferDraining MoveToProviding
 beq tank2 BufferDraining MoveToProviding
 
-beq tank1 BufferFull MoveToWatingOn1
-beq tank2 BufferFull MoveToWatingOn2
+beq tank1 BufferFull MoveToWaitingOn1
+beq tank2 BufferFull MoveToWaitingOn2
 j Start # stay in state and wait for supply
 
 DoCheckSupplyReady:
@@ -82,12 +82,12 @@ move state StateProvidingSupply
 s pump On 1
 j Start
 
-MoveToWatingOn1:
+MoveToWaitingOn1:
 move state StateWaitingSupply
 put chip 0 1
 j Start
 
-MoveToWatingOn2:
+MoveToWaitingOn2:
 move state StateWaitingSupply
 put chip 0 2
 j Start
