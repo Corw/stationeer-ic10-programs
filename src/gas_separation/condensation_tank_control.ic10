@@ -1,0 +1,63 @@
+lbn r0 435685051 HASH("Analyzer") ReferenceId Maximum
+lbn r1 -1280984102 HASH("Cooling Valve") ReferenceId Maximum
+lbn r8 -851746783 HASH("Memory Can Give") ReferenceId Maximum
+lbn r9 -851746783 HASH("Memory Can Take") ReferenceId Maximum
+
+define StateFilling 0
+define StateCooling 1
+define StateDraining 2
+
+define minPressure 1000
+define maxPressure 48000
+
+alias analyzer r0
+alias coolingValve r1
+alias hasGas r2
+alias hasLiquid r3
+alias hasAnyPhase r4
+alias state r6
+alias value r7
+alias memoryCanGive r8
+alias memoryCanTake r9
+
+move state StateFilling
+s memoryCanGive Setting 0
+s memoryCanTake Setting 0
+
+Start:
+yield
+
+s db Setting state
+
+beq state StateFilling DoCheckFilling
+beq state StateCooling DoCheckCooling
+beq state StateDraining DoCheckDraining
+j Start
+
+DoCheckFilling:
+l value analyzer Pressure
+slt value value maxPressure
+bgtz value Start
+move state StateCooling
+s coolingValve On 1
+s memoryCanTake Setting 0
+j Start
+
+DoCheckCooling:
+l hasGas analyzer RatioSteam
+l hasLiquid analyzer RatioWater
+add value hasGas hasLiquid
+bgtz value Start
+move state StateDraining
+s coolingValve On 0
+s memoryCanGive Setting 1
+j Start
+
+DoCheckDraining:
+l value analyzer Pressure
+sgt value value minPressure
+bgtz value Start
+move state StateFilling
+s memoryCanGive Setting 0
+s memoryCanTake Setting 1
+j Start
