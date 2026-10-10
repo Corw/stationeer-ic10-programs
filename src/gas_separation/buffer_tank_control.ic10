@@ -1,8 +1,3 @@
-define memory -851746783
-define alarm -2107840748
-define memoryAvailability HASH("Memory Buffer Availability")
-define alarmCritical HASH("Overpressure Alarm")
-# values
 define minPressure 1000
 define maxPressure 48000
 define criticalPressure 50000
@@ -31,13 +26,10 @@ alias stateBuffer1 r3
 alias stateBuffer2 r4
 alias value r5
 alias current r6 # current buffer
-alias activeTank r7
-# initialization
-move current 0
+move current 0 # initialization
 move stateBuffer1 -1
 move stateBuffer2 -1
-sbn alarm alarmCritical On 0
-
+sbn -2107840748 HASH("Overpressure Alarm") On 0
 alias tankSensor r10
 alias valveFill r11
 alias valveDrain r12
@@ -80,7 +72,6 @@ beq stateTank TankCritical OnTankCritical
 add stateBuffer stateTank stateValves # determine state of buffer system
 seq value stateBuffer 3 # correction for partial and closed
 select stateBuffer value BufferReady stateBuffer
-
 beq stateBuffer BufferDrained OnDrained
 beq stateBuffer BufferFilled OnFilled
 # cycling trough tanks
@@ -93,12 +84,14 @@ beqz value OpenFirstTank
 seq value stateBuffer1 BufferFilling
 seq reading stateBuffer2 BufferFilling
 or value value reading
-sbn memory memoryAvailability Setting value
+sbn -851746783 HASH("Memory Buffer Availability") Setting value
 mul value stateBuffer2 10
 add value stateBuffer1 value
 s db Setting value 
+get value db 0
+beqal value 1 OpenDrain1
+beqal value 2 OpenDrain2
 j Start
-
 ValvesClose:
 s  valveFill On 0
 s  valveDrain On 0
@@ -123,5 +116,13 @@ OpenSecondTank:
 sbn -1280984102 HASH("Tank 2 Fill Valve") On 1
 j Start
 OnTankCritical:
-sbn alarm alarmCritical On 1
+sbn -2107840748 HASH("Overpressure Alarm") On 1
 j Start
+OpenDrain1:
+sbn -1280984102 HASH("Tank 1 Drain Valve") On 1
+put db 0 0
+j ra
+OpenDrain2:
+sbn -1280984102 HASH("Tank 2 Drain Valve") On 1
+put db 0 0
+j ra
