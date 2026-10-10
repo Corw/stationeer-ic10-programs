@@ -193,6 +193,12 @@
             "description": "Exported script 'gas_separation/condensation_tank_control.ic10'",
             "src_file": "gas_separation/condensation_tank_control.ic10",
             "script_directory": "Gas separation/condensation tank control"
+        },
+        {
+            "name": "Gas separation/buffer tank command",
+            "description": "Exported script 'gas_separation/buffer_tank_command.ic10'",
+            "src_file": "gas_separation/buffer_tank_command.ic10",
+            "script_directory": "Gas separation/buffer tank command"
         }
     ]
 }
