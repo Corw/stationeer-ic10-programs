@@ -1,4 +1,5 @@
 define Kelvin 273.15
+define maxPressure 3000
 
 alias analyzer d0
 alias valve d1
@@ -7,16 +8,22 @@ alias memory d2
 alias current r0
 alias target r1
 alias on r2
-
+alias pressure r3
+alias safe r4
+alias heat r5
 
 Start:
 yield
 
 l current analyzer Temperature
+l pressure analyzer Pressure
 sub current current Kelvin
 l target memory Setting
 
-sgt on current target
+slt safe pressure maxPressure
+
+sgt heat current target
+and on heat safe
 s valve On on
 
 j Start
