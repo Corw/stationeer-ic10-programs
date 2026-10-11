@@ -59,5 +59,6 @@ sgt value value minPressure
 bgtz value Start
 move state StateFilling
 s memoryCanGive Setting 0
+sleep 5
 s memoryCanTake Setting 1
 j Start
