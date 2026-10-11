@@ -199,6 +199,12 @@
             "description": "Exported script 'gas_separation/buffer_tank_command.ic10'",
             "src_file": "gas_separation/buffer_tank_command.ic10",
             "script_directory": "Gas separation/buffer tank command"
+        },
+        {
+            "name": "Tank refill",
+            "description": "Exported script 'tank_refill.ic10'",
+            "src_file": "tank_refill.ic10",
+            "script_directory": "Tank refill"
         }
     ]
 }

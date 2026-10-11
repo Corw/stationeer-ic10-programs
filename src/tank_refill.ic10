@@ -1,0 +1,13 @@
+alias analyzer d0
+alias pump d1
+alias pressure r0
+alias value r1
+
+define limit 19000
+
+Start:
+yield
+l pressure analyzer Pressure
+sle value pressure limit
+s pump On value
+j Start
