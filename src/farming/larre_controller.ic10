@@ -1,0 +1,143 @@
+alias harv d0
+alias state d1 # controller determining state of hand and plant under hand
+alias seedSupply d2
+alias buff r0
+alias val r1
+alias program r10
+alias stateHand r11
+alias statePosition r12
+alias statePlant r13
+alias moveSetting r14
+define CooHome 0
+define CooUnloader 1
+define CooLoader 2
+define ProgHarvestPlant 0
+define ProgHarvestSeed 1
+define ProgSeed 2
+define AtHome 0
+define AtUnloader 1
+define AtLoader 2
+define AtField 3
+define AtEnd 4
+define PlantNone 10
+define PlantGrowing 20
+define PlantMatureSeed 30
+define PlantMature 40
+define PlantDead 50
+define ItemEmpty 0
+define ItemOccupied 100
+define ItemFull 200
+define JobPlant 100
+define JobHarvestSeed 200
+# intitialization
+move program ProgHarvestPlant
+Start:
+jal WaitIdle
+jal DetermineState
+beq program ProgHarvestPlant ProgramHarvestPlant
+j Start
+
+ProgramHarvestPlant:
+beq statePosition AtHome DoStep
+beq statePosition AtField DoFieldWork
+beq statePosition AtUnloader DoUnload
+beq statePosition AtEnd DoEnd
+
+DetermineState:
+mod val buff 10
+move statePosition val
+sub buff buff val
+mod val buff 100
+move statePlant val
+sub buff buff val
+mod val buff 1000
+move stateHand val
+j ra
+WaitIdle: # wait until idle
+yield
+l val harv Idle
+bgtz WaitIdle val
+j ra
+# programs
+DoStep:
+l val harv Setting
+sub val val 1
+s harv Setting val
+j Start
+DoGoHome:
+s harv Setting CooHome
+j Start
+DoActivate:
+s harv Activate 1
+j Start
+DoGoUnload:
+s harv Setting CooUnloader
+j Start
+DoUnload:
+bgt stateHand ItemEmpty DoActivate
+bltz moveSetting DoGoHome
+s harv Setting moveSetting
+move moveSetting -1
+j Start
+DoEnd:
+bgtz sp Sorting
+j Start
+DoLoadSeed:
+ls buff seedSupply 0 Occupied
+beqz buff DoEnd
+beq statePosition AtLoader DoActivate
+j DoGoLoader
+DoGoLoader:
+s harv Setting CooLoader
+j Start
+DoSeed:
+beq statePlant PlantNone DoActivate
+j DoStep
+DoBreak:
+s harv Setting CooHome
+sleep 30
+j Start
+DoStorePositionrAndUnload:
+l moveSetting harv Setting
+s harv Setting CooUnloader
+j Start
+DoQuePlantingAndMove:
+l val harv Setting
+add val val JobPlant
+push val
+j DoStep
+DoQueHarvestSeedAndMove:
+l val harv Setting
+add val val JobHarvestSeed
+push val
+j DoStep
+
+DoFieldWork:
+beq stateHand ItemFull DoStorePositionrAndUnload
+beq statePlant PlantNone DoQuePlantingAndMove
+beq statePlant PlantMatureSeed DoQueHarvestSeedAndMove
+beq statePlant PlantMature DoActivate
+beq statePlant PlantDead DoActivate # clear dead plant
+j DoStep
+
+Sorting:
+sub r0 sp 1 # max index
+Pass:
+move r1 0 # r1 stores if the stack was modified in pass
+move r2 0
+Loop:
+get r3 db r2 # take first
+add r2 r2 1
+get r4 db r2 # take second
+sgt r7 r3 r4
+select r5 r7 r3 r4
+select r6 r7 r4 r3
+poke r5 r2
+sub r2 r2 1
+poke r6 r2
+add r2 r2 1
+or r1 r1 r7
+blt r2 r0 Loop
+bgtz r1 Pass
+j ra
+
