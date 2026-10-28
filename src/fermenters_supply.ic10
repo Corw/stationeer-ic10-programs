@@ -1,11 +1,33 @@
 define valve -1337091041
+define fermenter 1103525139
 alias anyOpen r0
-alias silo d0 
+alias analyzer r1
+alias volumeAvailable r3
+alias current r4
+alias value r5
+alias silo d0
+
+define minLiquid 1000
+define maxLiters 5500
+
+lbn analyzer -2113838091 HASH("Analyzer") ReferenceId Maximum
 
 Start:
 yield
 lb anyOpen valve Open Maximum
 s silo Open anyOpen
 
+l current analyzer VolumeOfLiquid
+
+blt current minLiquid TurnOn
+bgt current maxLiters TurnOff
+j Start
+
+TurnOn:
+sb fermenter On 1
+j Start
+
+TurnOff:
+sb fermenter On 0
 j Start
 
