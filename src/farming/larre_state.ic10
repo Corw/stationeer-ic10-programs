@@ -1,5 +1,8 @@
 alias harv d0
 alias endSetting d1
+alias memoryPosition d2
+alias memoryPlant d3
+alias memoryHand d4
 alias buff r0
 alias val r1
 alias selectedContainer r2
@@ -57,6 +60,9 @@ move buff statePosition
 add buff buff statePlant
 add buff buff stateHand
 s db Setting buff
+s memoryPosition Setting statePosition
+s memoryPlant Setting statePlant
+s memoryHand Setting stateHand
 j Start
 
 SetActive:

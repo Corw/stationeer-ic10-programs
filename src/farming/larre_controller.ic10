@@ -1,5 +1,4 @@
 alias harv d0
-alias state d1 # controller determining state of hand and plant under hand
 alias seedSupply d2
 alias buff r0
 alias val r1
@@ -29,30 +28,19 @@ define ItemOccupied 100
 define ItemFull 200
 define JobPlant 100
 define JobHarvestSeed 200
-# intitialization
 move program ProgHarvestPlant
 Start:
 jal WaitIdle
-jal DetermineState
+l statePosition d3 Setting
+l statePlant d4 Setting
+l stateHand d5 Setting
 beq program ProgHarvestPlant ProgramHarvestPlant
 j Start
-
 ProgramHarvestPlant:
 beq statePosition AtHome DoStep
 beq statePosition AtField DoFieldWork
 beq statePosition AtUnloader DoUnload
 beq statePosition AtEnd DoEnd
-
-DetermineState:
-mod val buff 10
-move statePosition val
-sub buff buff val
-mod val buff 100
-move statePlant val
-sub buff buff val
-mod val buff 1000
-move stateHand val
-j ra
 WaitIdle: # wait until idle
 yield
 l val harv Idle
@@ -111,7 +99,6 @@ l val harv Setting
 add val val JobHarvestSeed
 push val
 j DoStep
-
 DoFieldWork:
 beq stateHand ItemFull DoStorePositionrAndUnload
 beq statePlant PlantNone DoQuePlantingAndMove
@@ -119,7 +106,6 @@ beq statePlant PlantMatureSeed DoQueHarvestSeedAndMove
 beq statePlant PlantMature DoActivate
 beq statePlant PlantDead DoActivate # clear dead plant
 j DoStep
-
 Sorting:
 sub r0 sp 1 # max index
 Pass:
@@ -140,4 +126,3 @@ or r1 r1 r7
 blt r2 r0 Loop
 bgtz r1 Pass
 j ra
-
