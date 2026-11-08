@@ -115,11 +115,12 @@ beqz val ra
 
 # check if plant is dead, exit if yes
 move statePlant PlantDead
-ls val harv Tray Growth
-beq val 6 ra
+ls val harv Tray Damage
+beq val 1 ra
 
 # check growth, under 5 it did not produce seed yet
 move statePlant PlantGrowing
+ls val harv Tray Growth
 blt val 5 ra
 
 ls val harv Tray Seeding
