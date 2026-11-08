@@ -1,0 +1,12 @@
+define lights 555215790
+
+alias sensor d0
+alias val r0
+alias on r1
+
+Start:
+yield
+l val sensor Quantity
+sgtz on val
+sb lights On on
+j Start
