@@ -44,7 +44,7 @@ beq statePosition AtEnd DoEnd
 WaitIdle: # wait until idle
 yield
 l val harv Idle
-bgtz WaitIdle val
+bgtz val WaitIdle
 j ra
 # programs
 DoStep:
@@ -85,7 +85,7 @@ DoBreak:
 s harv Setting CooHome
 sleep 30
 j Start
-DoStorePositionrAndUnload:
+DoStorePositionAndUnload:
 l moveSetting harv Setting
 s harv Setting CooUnloader
 j Start
@@ -100,7 +100,7 @@ add val val JobHarvestSeed
 push val
 j DoStep
 DoFieldWork:
-beq stateHand ItemFull DoStorePositionrAndUnload
+beq stateHand ItemFull DoStorePositionAndUnload
 beq statePlant PlantNone DoQuePlantingAndMove
 beq statePlant PlantMatureSeed DoQueHarvestSeedAndMove
 beq statePlant PlantMature DoActivate

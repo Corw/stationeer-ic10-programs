@@ -60,9 +60,6 @@ move buff statePosition
 add buff buff statePlant
 add buff buff stateHand
 s db Setting buff
-s memoryPosition Setting statePosition
-s memoryPlant Setting statePlant
-s memoryHand Setting stateHand
 j Start
 
 SetActive:
