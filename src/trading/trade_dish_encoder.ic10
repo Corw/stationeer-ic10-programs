@@ -1,0 +1,27 @@
+define COORD_RANGE 32851
+alias Horizontal r0
+alias Vertical r1
+alias Contact r2
+alias value r3
+alias encodedContact r4
+
+lbn Contact -851746783 HASH("ContactSetting") Setting Average
+
+Start:
+yield
+
+move value -1
+lbn Horizontal -851746783 HASH("ContactHorizontal") Setting Average
+beq Horizontal -1 EncodeContact
+lbn Vertical -851746783 HASH("ContactVertical") Setting Average
+
+# Encode valid coordinates
+mul value Vertical 361
+add value value Horizontal
+
+EncodeContact:
+mul encodedContact Contact COORD_RANGE
+add value value encodedContact
+
+sbn -851746783 HASH("EncodedSetting") Setting r3
+j Start
