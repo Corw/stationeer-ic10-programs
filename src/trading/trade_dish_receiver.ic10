@@ -1,0 +1,66 @@
+
+define COORD_RANGE 131044
+define INVALID 361
+
+alias Receiver d0
+
+alias value r0
+alias previous r1
+alias index r2
+alias coordinates r3
+alias horizontal r4
+alias vertical r5
+alias address r6
+
+# Initialize all five coordinate pairs as invalid
+move address 0
+loop:
+  put db address INVALID
+  add address address 1
+  blt address 10 loop
+
+# All messages are non-negative
+move previous -1
+
+main:
+  yield
+  l value Receiver Setting
+
+  # Ignore unchanged messages
+  beq value previous main
+  move previous value
+
+  # Decode dish index
+  div index value COORD_RANGE
+  floor index index
+
+  # Ignore unknown dish IDs
+  blt index 0 main
+  bgt index 4 main
+
+  # Decode horizontal and vertical
+  mod coordinates value COORD_RANGE
+  mod horizontal coordinates 362
+  div vertical coordinates 362
+  floor vertical vertical
+
+  # Validate both coordinates
+  blt horizontal 0 invalid
+  bgt horizontal 360 invalid
+  blt vertical 0 invalid
+  bgt vertical 90 invalid
+
+  j store
+
+invalid:
+  move horizontal INVALID
+  move vertical INVALID
+
+store:
+  # Store the coordinate pair at index * 2
+  mul address index 2
+  put db address horizontal
+  add address address 1
+  put db address vertical
+
+  j main
