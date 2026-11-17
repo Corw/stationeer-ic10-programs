@@ -25,54 +25,40 @@ lbn r8 largeDish HASH("Large") ReferenceId Maximum
 main:
   yield
 
-  # If a button has already triggered, wait for all releases
-  bnez latched release
-
   # Check buttons in priority order
+  move address 0
+  move dishRef r7
   lbn active button buttonUtility Activate Average
-  bgtz active utility
+  bgtz active transfer
 
+  move address 2
+  move dishRef r7
   lbn active button buttonBasic Activate Average
-  bgtz active basic
+  bgtz active transfer
 
+  move address 4
+  move dishRef r7
   lbn active button buttonMedium Activate Average
-  bgtz active medium
+  bgtz active transfer
 
+  move address 6
+  move dishRef r8
   lbn active button buttonLarge Activate Average
-  bgtz active activeLarge
+  bgtz active transfer
 
+  move address 8
+  move dishRef r8
   lbn active button buttonExotic Activate Average
-  bgtz active exotic
+  bgtz active transfer
+
+  move latched -1
 
   j main
 
-utility:
-  move address 0
-  move dishRef r7
-  j transfer
-
-basic:
-  move address 2
-  move dishRef r7
-  j transfer
-
-medium:
-  move address 4
-  move dishRef r7
-  j transfer
-
-activeLarge:
-  move address 6
-  move dishRef r8
-  j transfer
-
-exotic:
-  move address 8
-  move dishRef r8
-
 transfer:
   # Latch immediately, preventing repeated transfers
-  move latched 1
+  beq latched address main
+  move latched address
 
   # Read coordinates
   get horizontal receiverRef address
@@ -87,21 +73,4 @@ transfer:
   s dishRef Horizontal horizontal
   s dishRef Vertical vertical
 
-  j main
-
-release:
-  # Wait until every button has been released
-  lbn active button buttonUtility Activate Average
-  bgtz active main
-  lbn active button buttonBasic Activate Average
-  bgtz active main
-  lbn active button buttonMedium Activate Average
-  bgtz active main
-  lbn active button buttonLarge Activate Average
-  bgtz active main
-  lbn active button buttonExotic Activate Average
-  bgtz active main
-
-  # All released; accept another press
-  move latched 0
   j main
