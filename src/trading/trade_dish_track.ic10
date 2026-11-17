@@ -5,21 +5,15 @@ alias Contact r0
 alias Watts r1
 alias Downtime r2
 alias Position r3
-alias ContactSetting r4
-alias WattsVisibleSetting r5
 alias SignalTimeoutSetting r6
-alias DowntimeSetting r7
 alias Dish d0
-lbn ContactSetting -851746783 HASH("ContactSetting") ReferenceId Average
-lbn WattsVisibleSetting -851746783 HASH("WattsVisibleSetting") ReferenceId Average
 lbn SignalTimeoutSetting -851746783 HASH("SignalTimeoutSetting") ReferenceId Average
-lbn DowntimeSetting -851746783 HASH("DowntimeSetting") ReferenceId Average
 s db Setting 1 # Start the timer
 main:
   s Dish On 1
-  l Contact ContactSetting Setting
-  l Watts WattsVisibleSetting Setting
-  l Downtime DowntimeSetting Setting
+  lbn Contact -851746783 HASH("ContactSetting") Setting Average
+  lbn Watts -851746783 HASH("WattsVisibleSetting") Setting Average
+  lbn Downtime -851746783 HASH("DowntimeSetting") Setting Average
   move Position 0
 scan:
   div r15 Watts 0.2 #ScanRatio
