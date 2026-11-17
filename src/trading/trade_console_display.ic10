@@ -1,6 +1,6 @@
-
 define housing -128473777
 define button 1462769197
+define INVALID 361
 
 define buttonUtility HASH("Utility")
 define buttonBasic HASH("Basic")
@@ -16,65 +16,44 @@ alias vertical r4
 alias buttonName r5
 alias buttonRef r6
 alias color r7
+alias value r8
 
 # Find receiver housing
 lbn receiver housing HASH("Receiver") ReferenceId Maximum
 
-move index 0
-
-main:
+start:
   yield
 
-  # Read coordinate pair from receiver
-  mul address index 2
-  get horizontal receiver address
-  add address address 1
-  get vertical receiver address
+  lbn value 439026183 HASH("Medium Dish") On Average
+  select color value  Color.Green Color.Red
+  sbn button HASH("Medium Dish") Color color
 
-  # Determine button color
-  blt horizontal 0 invalid
-  bgt horizontal 360 invalid
-  blt vertical 0 invalid
-  bgt vertical 90 invalid
+  lbn value 1913391845 HASH("Large Dish") On Average
+  select color value  Color.Green Color.Red
+  sbn button HASH("Large Dish") Color color
 
-  move color Color.Green
-  j selectButton
+  move index 0
+  loop:
+    mul address index 2
+    get horizontal receiver address
+    add address address 1
+    get vertical receiver address
+    seq value horizontal INVALID
+    select color value Color.Yellow Color.Green
 
-invalid:
-  move color Color.Yellow
-
-selectButton:
-  beq index 0 utility
-  beq index 1 basic
-  beq index 2 medium
-  beq index 3 large
-  beq index 4 exotic
-  j main
-
-utility:
-  move buttonName buttonUtility
-  j updateButton
-
-basic:
-  move buttonName buttonBasic
-  j updateButton
-
-medium:
-  move buttonName buttonMedium
-  j updateButton
-
-large:
-  move buttonName buttonLarge
-  j updateButton
-
-exotic:
-  move buttonName buttonExotic
-
-updateButton:
-  lbn buttonRef button buttonName ReferenceId Maximum
-  s buttonRef Color color
-
-  # Next dish
-  add index index 1
-  mod index index 5
-  j main
+    move buttonName buttonUtility
+    beq index 0 updateButton
+    move buttonName buttonBasic
+    beq index 1 updateButton
+    move buttonName buttonMedium
+    beq index 2 updateButton
+    move buttonName buttonLarge
+    beq index 3 updateButton
+    move buttonName buttonExotic
+    beq index 4 updateButton
+    updateButton:
+    sbn button buttonName Color color
+    
+    add index index 1
+    ble index 5 loop
+j start
