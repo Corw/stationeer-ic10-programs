@@ -107,9 +107,11 @@ measure:
   ble r15 TargetSignalStrength acquired
   j ra
 acquired:
+  s Dish Setting ScanPower
+waitContactLeave:
   yield
   l r15 Dish SignalID
-  bgez r15 acquired
+  bgez r15 waitContactLeave
   s Dish Setting 0
   s Dish Vertical 0
   s Dish Horizontal 0
