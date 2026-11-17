@@ -1,5 +1,7 @@
 define housing -128473777
 define button 1462769197
+define switch 1773255945
+define displaySmall -2041948072
 define INVALID 361
 
 define buttonUtility HASH("Utility")
@@ -7,6 +9,12 @@ define buttonBasic HASH("Basic")
 define buttonMedium HASH("Medium")
 define buttonLarge HASH("Large")
 define buttonExotic HASH("Exotic")
+define dishMedium HASH("Medium Dish")
+define dishLarge HASH("Large Dish")
+
+# constants
+define ModeDegrees 16
+define ModeString 10
 
 alias receiver r0
 alias index r1
@@ -17,20 +25,36 @@ alias buttonName r5
 alias buttonRef r6
 alias color r7
 alias value r8
+alias dish r9
+alias dishName r15
+alias dishType r14
 
 # Find receiver housing
 lbn receiver housing HASH("Receiver") ReferenceId Maximum
+sbn displaySmall HASH("HorizontalActual") Mode ModeDegrees
+sbn displaySmall HASH("VerticalActual") Mode ModeDegrees
+sbn displaySmall HASH("HorizontalRequired") Mode ModeDegrees
+sbn displaySmall HASH("VerticalRequired") Mode ModeDegrees
 
 start:
   yield
 
-  lbn value 439026183 HASH("Medium Dish") On Average
+  lbn value 439026183 dishMedium On Average
   select color value  Color.Green Color.Red
-  sbn button HASH("Medium Dish") Color color
+  sbn button dishMedium Color color
 
-  lbn value 1913391845 HASH("Large Dish") On Average
+  lbn value 1913391845 dishLarge On Average
   select color value  Color.Green Color.Red
-  sbn button HASH("Large Dish") Color color
+  sbn button dishLarge Color color
+
+  lbn value switch HASH("DishSelect") On Average
+  select dishType value 439026183 1913391845
+  select dishName value dishMedium dishLarge
+  lbn dish dishType dishName ReferenceId Maximum
+  l value dish Horizontal
+  sbn displaySmall HASH("HorizontalActual") Setting value
+  l value dish Vertical
+  sbn displaySmall HASH("VerticalActual") Setting value
 
   move index 0
   loop:
