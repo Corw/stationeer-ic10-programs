@@ -1,4 +1,4 @@
-define COORD_RANGE 32942
+define COORD_RANGE 131044
 define INVALID 361
 alias Horizontal r0
 alias Vertical r1
@@ -19,7 +19,7 @@ move Horizontal value
 lbn Vertical -851746783 HASH("ContactVertical") Setting Average
 
 Encode:
-mul value Vertical 361
+mul value Vertical 362
 add value value Horizontal
 
 mul encodedContact Contact COORD_RANGE
