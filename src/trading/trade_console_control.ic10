@@ -1,0 +1,107 @@
+define button 1462769197
+define housing 2037291645
+define mediumDish 439026183
+define largeDish 1913391845
+
+define buttonUtility HASH("Utility")
+define buttonBasic HASH("Basic")
+define buttonMedium HASH("Medium")
+define buttonLarge HASH("Large")
+define buttonExotic HASH("Exotic")
+
+alias active r0
+alias latched r1
+alias horizontal r2
+alias vertical r3
+alias address r4
+alias receiverRef r5
+alias dishRef r6
+
+# Resolve devices once
+lbn receiverRef housing HASH("Receiver") ReferenceId Maximum
+lbn r7 mediumDish HASH("Medium") ReferenceId Maximum
+lbn r8 largeDish HASH("Large") ReferenceId Maximum
+
+main:
+  yield
+
+  # If a button has already triggered, wait for all releases
+  bnez latched release
+
+  # Check buttons in priority order
+  lbn active button buttonUtility Activate Average
+  bgtz active utility
+
+  lbn active button buttonBasic Activate Average
+  bgtz active basic
+
+  lbn active button buttonMedium Activate Average
+  bgtz active medium
+
+  lbn active button buttonLarge Activate Average
+  bgtz active activeLarge
+
+  lbn active button buttonExotic Activate Average
+  bgtz active exotic
+
+  j main
+
+utility:
+  move address 0
+  move dishRef r7
+  j transfer
+
+basic:
+  move address 2
+  move dishRef r7
+  j transfer
+
+medium:
+  move address 4
+  move dishRef r7
+  j transfer
+
+activeLarge:
+  move address 6
+  move dishRef r8
+  j transfer
+
+exotic:
+  move address 8
+  move dishRef r8
+
+transfer:
+  # Latch immediately, preventing repeated transfers
+  move latched 1
+
+  # Read coordinates
+  get horizontal receiverRef address
+  add address address 1
+  get vertical receiverRef address
+
+  # Don't transfer invalid coordinates
+  beq horizontal 361 main
+  beq vertical 361 main
+
+  # Transfer coordinates to communication dish
+  s dishRef Horizontal horizontal
+  s dishRef Vertical vertical
+
+  j main
+
+release:
+  # Wait until every button has been released
+  lbn active button buttonUtility Activate Average
+  bgtz active main
+  lbn active button buttonBasic Activate Average
+  bgtz active main
+  lbn active button buttonMedium Activate Average
+  bgtz active main
+  lbn active button buttonLarge Activate Average
+  bgtz active main
+  lbn active button buttonExotic Activate Average
+  bgtz active main
+
+  # All released; accept another press
+  move latched 0
+  j main
