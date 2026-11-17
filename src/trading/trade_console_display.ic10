@@ -1,5 +1,5 @@
 
-define HOUSING 2037291645
+define housing -128473777
 define button 1462769197
 
 define buttonUtility HASH("Utility")
@@ -18,7 +18,7 @@ alias buttonRef r6
 alias color r7
 
 # Find receiver housing
-lbn receiver HOUSING HASH("Receiver") ReferenceId Maximum
+lbn receiver housing HASH("Receiver") ReferenceId Maximum
 
 move index 0
 
