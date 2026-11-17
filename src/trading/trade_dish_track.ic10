@@ -1,10 +1,12 @@
 define TargetSignalStrength 2
 define AzimuthPeriod 1620  # 360 * 4.5
 define RefineRadius 15.307
+define MaxPower 50000
 alias Contact r0
 alias Watts r1
 alias Downtime r2
 alias Position r3
+alias ScanPower r4
 alias Dish d0
 s db Setting 1 # Start the timer
 main:
@@ -13,10 +15,10 @@ main:
   lbn Watts -851746783 HASH("WattsVisibleSetting") Setting Average
   lbn Downtime -851746783 HASH("DowntimeSetting") Setting Average
   move Position 0
+  div ScanPower Watts 0.2 #ScanRatio
+  select ScanPower ScanPower ScanPower MaxPower
 scan:
-  div r15 Watts 0.2 #ScanRatio
-  select r15 r15 r15 50000
-  s Dish Setting r15
+  s Dish Setting ScanPower
   s Dish BestContactFilter -1
   add Position Position 10 # ScanStepSize
   mod Position Position AzimuthPeriod
@@ -32,7 +34,7 @@ scan:
   bne r15 Contact scan
   l r15 Dish SignalID
   s Dish BestContactFilter r15
-  s Dish Setting 50000
+  s Dish Setting MaxPower
   jal resolve
   beqz Watts scan
   move r14 0 # Offset angle
