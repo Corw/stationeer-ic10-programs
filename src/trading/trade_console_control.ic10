@@ -10,6 +10,7 @@ alias vertical r3
 alias address r4
 alias receiverRef r5
 alias dishRef r6
+alias name r7
 
 # Resolve devices once
 lbn receiverRef housing HASH("Receiver") ReferenceId Maximum
@@ -22,27 +23,32 @@ main:
   # Check buttons in priority order
   move address 0
   move dishRef r7
-  lbn active button HASH("Utility") Activate Average
+  move name HASH("Utility")
+  lbn active button name Activate Average
   bgtz active transfer
 
   move address 2
   move dishRef r7
-  lbn active button HASH("Basic") Activate Average
+  move name HASH("Basic")
+  lbn active button name Activate Average
   bgtz active transfer
 
   move address 4
   move dishRef r7
-  lbn active button HASH("Medium") Activate Average
+  move name HASH("Medium")
+  lbn active button name Activate Average
   bgtz active transfer
 
   move address 6
   move dishRef r8
-  lbn active button HASH("Large") Activate Average
+  move name HASH("Large")
+  lbn active button name Activate Average
   bgtz active transfer
 
   move address 8
   move dishRef r8
-  lbn active button HASH("Exotic") Activate Average
+  move name HASH("Exotic")
+  lbn active button name Activate Average
   bgtz active transfer
 
   move latched -1
@@ -51,8 +57,8 @@ main:
 
 transfer:
   # Latch immediately, preventing repeated transfers
-  beq latched address main
-  move latched address
+  beq latched name main
+  move latched name
 
   # Read coordinates
   get horizontal receiverRef address
