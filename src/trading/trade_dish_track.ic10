@@ -5,9 +5,7 @@ alias Contact r0
 alias Watts r1
 alias Downtime r2
 alias Position r3
-alias SignalTimeoutSetting r6
 alias Dish d0
-lbn SignalTimeoutSetting -851746783 HASH("SignalTimeoutSetting") ReferenceId Average
 s db Setting 1 # Start the timer
 main:
   s Dish On 1
@@ -91,7 +89,7 @@ resolve:
   l r15 Dish Idle
   breqz r15 -1
   yield
-  l r15 SignalTimeoutSetting Setting
+  lbn r15 -851746783 HASH("SignalTimeoutSetting") Setting Average
   sleep r15
   l r15 Dish SignalID
   bltz r15 scan
