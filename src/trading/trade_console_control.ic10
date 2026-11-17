@@ -3,12 +3,6 @@ define housing -128473777
 define mediumDish 439026183
 define largeDish 1913391845
 
-define buttonUtility HASH("Utility")
-define buttonBasic HASH("Basic")
-define buttonMedium HASH("Medium")
-define buttonLarge HASH("Large")
-define buttonExotic HASH("Exotic")
-
 alias active r0
 alias latched r1
 alias horizontal r2
@@ -28,27 +22,27 @@ main:
   # Check buttons in priority order
   move address 0
   move dishRef r7
-  lbn active button buttonUtility Activate Average
+  lbn active button HASH("Utility") Activate Average
   bgtz active transfer
 
   move address 2
   move dishRef r7
-  lbn active button buttonBasic Activate Average
+  lbn active button HASH("Basic") Activate Average
   bgtz active transfer
 
   move address 4
   move dishRef r7
-  lbn active button buttonMedium Activate Average
+  lbn active button HASH("Medium") Activate Average
   bgtz active transfer
 
   move address 6
   move dishRef r8
-  lbn active button buttonLarge Activate Average
+  lbn active button HASH("Large") Activate Average
   bgtz active transfer
 
   move address 8
   move dishRef r8
-  lbn active button buttonExotic Activate Average
+  lbn active button HASH("Exotic") Activate Average
   bgtz active transfer
 
   move latched -1
