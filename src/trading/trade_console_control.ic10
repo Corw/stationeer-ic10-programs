@@ -21,7 +21,7 @@ lbn largeDish 1913391845 HASH("Large Dish") ReferenceId Maximum
 main:
   yield
 
-  # Check buttons in priority order
+  # medium dish operations
   move address 0
   move dishRef mediumDish
   move name HASH("Utility")
@@ -29,17 +29,20 @@ main:
   bgtz active transfer
 
   move address 2
-  move dishRef mediumDish
   move name HASH("Basic")
   lbn active button name Activate Average
   bgtz active transfer
 
   move address 4
-  move dishRef mediumDish
   move name HASH("Medium")
   lbn active button name Activate Average
   bgtz active transfer
 
+  move name HASH("Medium Dish")
+  lbn active button name Activate Average
+  bgtz active toggleDish
+
+  #   large dish operations
   move address 6
   move dishRef largeDish
   move name HASH("Large")
@@ -47,18 +50,11 @@ main:
   bgtz active transfer
 
   move address 8
-  move dishRef largeDish
   move name HASH("Exotic")
   lbn active button name Activate Average
   bgtz active transfer
 
-  move name HASH("Medium Dish")
-  move dishRef mediumDish
-  lbn active button name Activate Average
-  bgtz active toggleDish
-
   move name HASH("Large Dish")
-  move dishRef largeDish
   lbn active button name Activate Average
   bgtz active toggleDish
 
