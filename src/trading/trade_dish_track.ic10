@@ -5,12 +5,11 @@ alias Contact r0
 alias Watts r1
 alias Downtime r2
 alias Position r3
-alias Dish r4
-alias ContactSetting r5
-alias WattsVisibleSetting r6
-alias SignalTimeoutSetting r7
-alias DowntimeSetting r8
-lbn Dish -2138748650 HASH("Dish") ReferenceId Average
+alias ContactSetting r4
+alias WattsVisibleSetting r5
+alias SignalTimeoutSetting r6
+alias DowntimeSetting r7
+alias Dish d0
 lbn ContactSetting -851746783 HASH("ContactSetting") ReferenceId Average
 lbn WattsVisibleSetting -851746783 HASH("WattsVisibleSetting") ReferenceId Average
 lbn SignalTimeoutSetting -851746783 HASH("SignalTimeoutSetting") ReferenceId Average

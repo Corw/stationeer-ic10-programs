@@ -1,3 +1,4 @@
+Based on https://github.com/stationeering-systems/moon-normal-standard/blob/main/trade/ic10/trade_dish_track.ic10
 
 ## CONTACT SETTINGS
 | Contact | Dish   | Slot | Watts | Timeout | Downtime |
