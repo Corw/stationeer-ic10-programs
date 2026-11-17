@@ -1,4 +1,5 @@
-define COORD_RANGE 32851
+define COORD_RANGE 32942
+define INVALID 361
 alias Horizontal r0
 alias Vertical r1
 alias Contact r2
@@ -9,17 +10,18 @@ lbn Contact -851746783 HASH("ContactSetting") Setting Average
 
 Start:
 yield
+move Horizontal INVALID
+move Vertical INVALID
 
-move value -1
-lbn Horizontal -851746783 HASH("ContactHorizontal") Setting Average
-beq Horizontal -1 EncodeContact
+lbn value -851746783 HASH("ContactHorizontal") Setting Average
+beq value -1 Encode
+move Horizontal value 
 lbn Vertical -851746783 HASH("ContactVertical") Setting Average
 
-# Encode valid coordinates
+Encode:
 mul value Vertical 361
 add value value Horizontal
 
-EncodeContact:
 mul encodedContact Contact COORD_RANGE
 add value value encodedContact
 
