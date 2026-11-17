@@ -1,7 +1,5 @@
 define button 1462769197
 define housing -128473777
-define mediumDish 439026183
-define largeDish 1913391845
 
 alias active r0
 alias latched r1
@@ -11,54 +9,65 @@ alias address r4
 alias receiverRef r5
 alias dishRef r6
 alias name r7
+alias mediumDish r15
+alias largeDish r14
+alias value r13
 
 # Resolve devices once
 lbn receiverRef housing HASH("Receiver") ReferenceId Maximum
-lbn r7 mediumDish HASH("Medium Dish") ReferenceId Maximum
-lbn r8 largeDish HASH("Large Dish") ReferenceId Maximum
+lbn mediumDish 439026183 HASH("Medium Dish") ReferenceId Maximum
+lbn largeDish 1913391845 HASH("Large Dish") ReferenceId Maximum
 
 main:
   yield
 
   # Check buttons in priority order
   move address 0
-  move dishRef r7
+  move dishRef mediumDish
   move name HASH("Utility")
   lbn active button name Activate Average
   bgtz active transfer
 
   move address 2
-  move dishRef r7
+  move dishRef mediumDish
   move name HASH("Basic")
   lbn active button name Activate Average
   bgtz active transfer
 
   move address 4
-  move dishRef r7
+  move dishRef mediumDish
   move name HASH("Medium")
   lbn active button name Activate Average
   bgtz active transfer
 
   move address 6
-  move dishRef r8
+  move dishRef largeDish
   move name HASH("Large")
   lbn active button name Activate Average
   bgtz active transfer
 
   move address 8
-  move dishRef r8
+  move dishRef largeDish
   move name HASH("Exotic")
   lbn active button name Activate Average
   bgtz active transfer
+
+  move name HASH("Medium Dish")
+  move dishRef mediumDish
+  lbn active button name Activate Average
+  bgtz active toggleDish
+
+  move name HASH("Large Dish")
+  move dishRef largeDish
+  lbn active button name Activate Average
+  bgtz active toggleDish
 
   move latched -1
 
   j main
 
 transfer:
-  # Latch immediately, preventing repeated transfers
-  beq latched name main
-  move latched name
+  jal latch
 
   # Read coordinates
   get horizontal receiverRef address
@@ -74,3 +83,13 @@ transfer:
   s dishRef Vertical vertical
 
   j main
+toggleDish:
+  jal latch
+  l value dishRef On
+  select value value 0 1
+  s dishRef On value
+  j main
+latch:
+  beq latched name main
+  move latched name
+  j ra
