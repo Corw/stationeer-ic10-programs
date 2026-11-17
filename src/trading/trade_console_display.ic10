@@ -1,0 +1,80 @@
+
+define HOUSING 2037291645
+define button 1462769197
+
+define buttonUtility HASH("Utility")
+define buttonBasic HASH("Basic")
+define buttonMedium HASH("Medium")
+define buttonLarge HASH("Large")
+define buttonExotic HASH("Exotic")
+
+alias receiver r0
+alias index r1
+alias address r2
+alias horizontal r3
+alias vertical r4
+alias buttonName r5
+alias buttonRef r6
+alias color r7
+
+# Find receiver housing
+lbn receiver HOUSING HASH("Receiver") ReferenceId Maximum
+
+move index 0
+
+main:
+  yield
+
+  # Read coordinate pair from receiver
+  mul address index 2
+  get horizontal receiver address
+  add address address 1
+  get vertical receiver address
+
+  # Determine button color
+  blt horizontal 0 invalid
+  bgt horizontal 360 invalid
+  blt vertical 0 invalid
+  bgt vertical 90 invalid
+
+  move color Color.Green
+  j selectButton
+
+invalid:
+  move color Color.Yellow
+
+selectButton:
+  beq index 0 utility
+  beq index 1 basic
+  beq index 2 medium
+  beq index 3 large
+  beq index 4 exotic
+  j main
+
+utility:
+  move buttonName buttonUtility
+  j updateButton
+
+basic:
+  move buttonName buttonBasic
+  j updateButton
+
+medium:
+  move buttonName buttonMedium
+  j updateButton
+
+large:
+  move buttonName buttonLarge
+  j updateButton
+
+exotic:
+  move buttonName buttonExotic
+
+updateButton:
+  lbn buttonRef button buttonName ReferenceId Maximum
+  s buttonRef Color color
+
+  # Next dish
+  add index index 1
+  mod index index 5
+  j main
