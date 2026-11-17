@@ -19,8 +19,8 @@ alias dishRef r6
 
 # Resolve devices once
 lbn receiverRef housing HASH("Receiver") ReferenceId Maximum
-lbn r7 mediumDish HASH("Medium") ReferenceId Maximum
-lbn r8 largeDish HASH("Large") ReferenceId Maximum
+lbn r7 mediumDish HASH("Medium Dish") ReferenceId Maximum
+lbn r8 largeDish HASH("Large Dish") ReferenceId Maximum
 
 main:
   yield
