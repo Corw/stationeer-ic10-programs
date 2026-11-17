@@ -47,7 +47,7 @@ start:
   select color value  Color.Green Color.Red
   sbn button dishLarge Color color
 
-  lbn value switch HASH("DishSelect") On Average
+  lbn value switch HASH("Select Dish") On Average
   select dishType value 439026183 1913391845
   select dishName value dishMedium dishLarge
   lbn dish dishType dishName ReferenceId Maximum
