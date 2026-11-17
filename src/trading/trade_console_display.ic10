@@ -55,5 +55,5 @@ start:
     sbn button buttonName Color color
     
     add index index 1
-    ble index 5 loop
+    blt index 5 loop
 j start
