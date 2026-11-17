@@ -1,0 +1,46 @@
+define MEMORY HASH("StructureLogicMemory")
+
+alias value r0
+alias refid r14
+alias index r15
+alias devicecount r13
+
+discoveryinit:
+yield
+move sp 0
+
+# Count Logic Memory devices
+lb value MEMORY PrefabHash Sum
+div devicecount value MEMORY
+
+move index 0
+
+discovery:
+get refid db:0 index
+l value refid PrefabHash
+bne value MEMORY wrongid
+
+# Store matching device reference
+push refid
+
+wrongid:
+beq devicecount sp maininit
+add index index 1
+j discovery
+
+maininit:
+beqz sp discoveryinit
+
+main:
+move sp devicecount
+yield
+
+transmit:
+beqz sp main
+pop refid
+bdns refid discoveryinit
+
+l value refid Setting
+s d0 Setting value
+sleep 1
+j transmit
