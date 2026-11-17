@@ -114,10 +114,9 @@ acquired:
   sbn -851746783 HASH("ContactHorizontal") Setting r15
   l r15 Dish Vertical
   sbn -851746783 HASH("ContactVertical") Setting r15
-waitContactLeave:
   yield
   l r15 Dish SignalID
-  bgez r15 waitContactLeave
+  brgez r15 -2
   s Dish Setting 0
   s Dish Vertical 0
   s Dish Horizontal 0
