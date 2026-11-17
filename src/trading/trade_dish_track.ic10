@@ -111,8 +111,10 @@ measure:
 acquired:
   s Dish Setting ScanPower
   l r15 Dish Horizontal
+  round r15 r15
   sbn -851746783 HASH("ContactHorizontal") Setting r15
   l r15 Dish Vertical
+  round r15 r15
   sbn -851746783 HASH("ContactVertical") Setting r15
   yield
   l r15 Dish SignalID
