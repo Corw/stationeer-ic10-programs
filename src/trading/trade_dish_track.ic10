@@ -1,0 +1,127 @@
+define TargetSignalStrength 2
+define AzimuthPeriod 1620  # 360 * 4.5
+define RefineRadius 15.307
+alias Contact r0
+alias Watts r1
+alias Downtime r2
+alias Position r3
+alias Dish r4
+alias ContactSetting r5
+alias WattsVisibleSetting r6
+alias SignalTimeoutSetting r7
+alias DowntimeSetting r8
+lbn Dish -2138748650 HASH("Dish") ReferenceId Average
+lbn ContactSetting -851746783 HASH("ContactSetting") ReferenceId Average
+lbn WattsVisibleSetting -851746783 HASH("WattsVisibleSetting") ReferenceId Average
+lbn SignalTimeoutSetting -851746783 HASH("SignalTimeoutSetting") ReferenceId Average
+lbn DowntimeSetting -851746783 HASH("DowntimeSetting") ReferenceId Average
+s db Setting 1 # Start the timer
+main:
+  s Dish On 1
+  l Contact ContactSetting Setting
+  l Watts WattsVisibleSetting Setting
+  l Downtime DowntimeSetting Setting
+  move Position 0
+scan:
+  div r15 Watts 0.2 #ScanRatio
+  select r15 r15 r15 50000
+  s Dish Setting r15
+  s Dish BestContactFilter -1
+  add Position Position 10 # ScanStepSize
+  mod Position Position AzimuthPeriod
+  beqz Position scan
+  s Dish Horizontal Position
+  div r15 90 AzimuthPeriod
+  mul r15 r15 Position
+  s Dish Vertical r15
+  l r15 Dish Idle
+  breqz r15 -1
+  yield
+  l r15 Dish ContactSlotIndex
+  bne r15 Contact scan
+  l r15 Dish SignalID
+  s Dish BestContactFilter r15
+  s Dish Setting 50000
+  jal resolve
+  beqz Watts scan
+  move r14 0 # Offset angle
+  l r13 Dish Vertical
+  l r12 Dish Horizontal
+refine:
+  mul r11 r14 deg2rad
+  sin r10 r11
+  mul r10 r10 RefineRadius
+  add r10 r10 r13
+  s Dish Vertical r10
+  mul r10 r10 deg2rad
+  sin r10 r10
+  cos r9 r11
+  div r10 r9 r10
+  mul r10 r10 RefineRadius
+  add r10 r10 r12
+  s Dish Horizontal r10
+  jal resolve
+  add r14 r14 45 #RefineAngle
+  j refine
+lock:
+  l r14 Dish Vertical
+  l r13 Dish Horizontal
+  brge r14 r15 2
+  mul r15 r15 -1
+  mul r12 r15 r15
+  mul r12 r12 2 # 2s_a^2
+  sub r11 r14 r15
+  s Dish Vertical r11
+  move r11 r15
+  jal measure
+  mul r10 r15 r15 # s_b^2
+  sub r12 r12 r10 # 2s_a^2 - s_b^2
+  div r12 r12 r11
+  div r12 r12 -2  # (2s_a^2 - s_b^2) / -2s_a
+  add r11 r14 r12
+  max r11 r11 1 # Prevent divide by zero
+  s Dish Vertical r11
+  jal measure
+  mul r12 r11 deg2rad
+  sin r12 r12
+  move r11 r15
+halign:
+  div r10 r11 r12
+  mul r12 r12 -1
+  add r10 r10 r13
+  s Dish Horizontal r10
+  jal measure
+  bgtz r12 lock
+  blt r15 r11 lock
+  j halign
+resolve:
+  l r15 Dish Idle
+  breqz r15 -1
+  yield
+  l r15 SignalTimeoutSetting Setting
+  sleep r15
+  l r15 Dish SignalID
+  bltz r15 scan
+  l r15 Dish SignalStrength
+  bltz r15 ra
+  ble r15 TargetSignalStrength acquired
+  j lock
+measure:
+  yield
+  l r15 Dish SignalID
+  bltz r15 scan
+  l r15 Dish SignalStrength
+  bltz r15 measure
+  ble r15 TargetSignalStrength acquired
+  j ra
+acquired:
+  l r15 Dish SignalID
+  bgez r15 acquired
+  s db Setting 0
+  yield
+  s db Setting 1 # Reset the timer
+  s Dish Setting 0
+  s Dish Vertical 0
+  s Dish Horizontal 0
+  sleep Downtime
+  j main
