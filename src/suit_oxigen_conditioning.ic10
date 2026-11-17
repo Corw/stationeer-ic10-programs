@@ -1,0 +1,54 @@
+define Kelvin 273.15
+alias analyzerPreheater d0
+alias heaterPreheater d1
+alias pumpPreheater d2
+alias analyzerSupply d3
+alias heaterSupply d4
+alias pumpSupply d5
+
+
+alias pressure r1
+alias temperature r0
+alias temperatureSafe r2
+alias pressureSafe r3
+alias on r4
+alias supplySafe r5
+Start:
+yield
+
+l pressure analyzerPreheater Pressure
+l temperature analyzerPreheater Temperature
+sub temperature temperature Kelvin
+
+# is it safe to load to preheater
+slt on temperature 0
+s heaterPreheater On on
+
+slt pressureSafe pressure 10000
+sgt temperatureSafe temperature -100
+
+and on pressureSafe temperatureSafe
+s pumpPreheater On on
+
+# is it safe to take from preheater
+slt pressureSafe pressure 10000
+sgt temperatureSafe temperature 0
+and supplySafe pressureSafe temperatureSafe
+
+
+# is it safe to load to supply
+l pressure analyzerSupply Pressure
+l temperature analyzerSupply Temperature
+sub temperature temperature Kelvin
+
+sle on temperature 25
+s heaterSupply On on
+
+slt pressureSafe pressure 19000
+sge temperatureSafe temperature 20
+
+and on pressureSafe temperatureSafe
+and on on supplySafe
+s pumpSupply On on
+
+j Start
