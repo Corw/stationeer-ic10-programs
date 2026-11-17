@@ -8,7 +8,6 @@ alias Downtime r2
 alias Position r3
 alias ScanPower r4
 alias Dish d0
-s db Setting 1 # Start the timer
 main:
   s Dish On 1
   lbn Contact -851746783 HASH("ContactSetting") Setting Average
@@ -108,11 +107,9 @@ measure:
   ble r15 TargetSignalStrength acquired
   j ra
 acquired:
+  yield
   l r15 Dish SignalID
   bgez r15 acquired
-  s db Setting 0
-  yield
-  s db Setting 1 # Reset the timer
   s Dish Setting 0
   s Dish Vertical 0
   s Dish Horizontal 0
