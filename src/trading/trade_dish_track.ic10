@@ -28,9 +28,9 @@ scan:
   div r15 90 AzimuthPeriod
   mul r15 r15 Position
   s Dish Vertical r15
-  l r15 Dish Idle
-  breqz r15 -1
   yield
+  l r15 Dish Idle
+  breqz r15 -2
   l r15 Dish ContactSlotIndex
   bne r15 Contact scan
   l r15 Dish SignalID
@@ -89,9 +89,9 @@ halign:
   blt r15 r11 lock
   j halign
 resolve:
-  l r15 Dish Idle
-  breqz r15 -1
   yield
+  l r15 Dish Idle
+  breqz r15 -2
   lbn r15 -851746783 HASH("SignalTimeoutSetting") Setting Average
   sleep r15
   l r15 Dish SignalID
