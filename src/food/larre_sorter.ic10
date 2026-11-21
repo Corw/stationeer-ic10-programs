@@ -1,5 +1,6 @@
 define export 1957571043
 define target 255
+define max_index 14
 alias hand d0
 alias value r15
 alias position r14
@@ -25,23 +26,16 @@ jal wait_idle
 mul position position -1
 s hand Setting position
 jal wait_idle
-move index 0
-ls value hand target FreeSlots
-bgtz value slot_loop
-# empty hand if container full
-s hand Setting -1
-jal wait_idle
-s hand Activate 1
-jal wait_idle
-j move_home
 # find free slot
 slot_loop:
   s hand TargetSlotIndex index
   ls value hand target Occupied
-  breqz value 3
+  beqz value empty_hand
   add index index 1
-  j slot_loop
-# drop into free slot
+  ble index max_index slot_loop
+  s hand Setting -1
+  jal wait_idle  
+empty_hand:
 s hand Activate 1
 jal wait_idle
 # move home
