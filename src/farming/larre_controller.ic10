@@ -30,7 +30,7 @@ lbn state 2037291645 HASH("State") ReferenceId Maximum
 lb seedSupply 1957571043 ReferenceId Maximum
 move program ProgHarvestSeed
 move step -1
-move last CooHome
+move last 0
 Start:
 yield
 l r0 state Setting
