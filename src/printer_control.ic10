@@ -3,9 +3,11 @@ alias begin d1
 alias numpad d2
 alias stacker d3
 alias display d4
+alias countdown d5
 alias recipe r1
 alias value r2
 alias instruction r3
+alias count r4
 alias state r15
 
 define state_idle 0
@@ -18,6 +20,9 @@ l value numpad Setting
 s display Setting value
 l state printer Activate
 beq state state_idle check_begin
+l value printer ExportCount
+sub value count value
+s countdown Setting value
 j start
 check_begin:
 # clear stacker
@@ -30,10 +35,12 @@ l value begin Activate
 beqz value start
 l recipe printer RecipeHash
 l value numpad Setting
-select value value value 1
+select count value value 1
+
+s printer ClearMemory 1
 
 move instruction PrinterInstruction.ExecuteRecipe
-ins instruction value 8 8
+ins instruction count 8 8
 ins instruction recipe 16 32
 
 put printer 0 PrinterInstruction.WaitUntilNextValid
