@@ -1,11 +1,14 @@
-alias intake d0
-alias seeds d1
-alias stacker d2
-
+alias intake r5
+alias seeds r6
+alias stacker r7
 alias intakeOccupied r0
 alias intakeOpen r1
 alias seedOccupied r2
 alias stackerOccupied r3
+
+lb intake -850484480 ReferenceId Maximum
+lb seeds 1957571043 ReferenceId Maximum
+lb stacker 1585641623 ReferenceId Maximum
 
 Start:
 yield
@@ -20,5 +23,5 @@ s intake Open intakeOpen
 bgtz seedOccupied Start
 bltz stackerOccupied Start
 s stacker Activate 1
-	
+
 j Start
