@@ -1,0 +1,42 @@
+alias printer d0
+alias begin d1
+alias numpad d2
+alias stacker d3
+alias display d4
+alias recipe r1
+alias value r2
+alias instruction r3
+alias state r15
+
+define state_idle 0
+define state_active 1
+
+start:
+yield
+l value numpad Setting
+s display Setting value
+l state printer Activate
+beq state state_idle check_begin
+j start
+check_begin:
+# clear stacker
+ls value stacker 2 Occupied
+breqz value 3
+sleep 2 # give time for last item to stack
+s stacker Activate 1
+# check button press
+l value begin Activate
+beqz value start
+l recipe printer RecipeHash
+l value numpad Setting
+select value value value 1
+
+move instruction PrinterInstruction.ExecuteRecipe
+ins instruction value 8 8
+ins instruction recipe 16 32
+
+put printer 0 PrinterInstruction.WaitUntilNextValid
+put printer 1 instruction
+
+s numpad Setting 1
+j start
