@@ -1,0 +1,26 @@
+define memory -851746783
+alias sensor r15
+alias time r14
+alias value r13
+alias previous r12
+alias sunshine r11
+alias light r10
+
+lb sensor 1076425094 ReferenceId Maximum
+lb light -1758710260 ReferenceId Maximum
+lbn time -851746783 HASH("Light per day") ReferenceId Maximum
+start:
+yield
+s db Setting -1
+move previous sunshine
+l sunshine sensor Activate
+beqz sunshine start
+bnez previous start
+l value time Setting
+mul value value 60
+s light On 1
+s db Setting value
+sleep value
+s light On 0
+j start
+
