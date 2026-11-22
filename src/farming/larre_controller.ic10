@@ -1,6 +1,6 @@
-alias harv d0
-alias state d1
-alias seedSupply d2
+alias harv r2
+alias state r3
+alias seedSupply r4
 alias val r1
 alias reqPlantState r5
 alias step r6
@@ -9,9 +9,6 @@ alias program r10
 alias stateHand r11
 alias statePosition r12
 alias statePlant r13
-define CooHome 0
-define CooUnloader 1
-define CooLoader 2
 define ProgHarvestSeed 0
 define ProgHarvestPlant 1
 define ProgSeed 2
@@ -28,6 +25,9 @@ define PlantDead 50
 define ItemEmpty 0
 define ItemOccupied 100
 define ItemFull 200
+lb harv 85133079 ReferenceId Maximum
+lbn state 2037291645 HASH("State") ReferenceId Maximum
+lb seedSupply 1957571043 ReferenceId Maximum
 move program ProgHarvestSeed
 move step -1
 move last CooHome
@@ -86,7 +86,7 @@ DoSavePositionAndGoUnload:
 l last harv Setting
 j DoGoUnload
 DoGoUnload:
-s harv Setting CooUnloader
+s harv Setting 1
 j Start
 DoUnloadOrContinue:
 bne stateHand ItemEmpty GoActivate
@@ -97,7 +97,7 @@ add program program 1
 sgt r0 program ProgSeed
 select program r0 ProgHarvestSeed program
 beq stateHand ItemEmpty DoChangeDirectionAndNext
-move last CooHome
+move last 0
 j DoGoUnload
 DoChangeDirectionAndNext:
 select step step 1 -1
@@ -116,11 +116,11 @@ DoSavePositionAndGoLoad:
 l last harv Setting
 j GoLoad
 GoLoad:
-s harv Setting CooLoader
+s harv Setting 2
 j Start
 GoStartAtHome:
 move step -1
-s harv Setting CooHome
+s harv Setting 0
 j Start
 DoLoadOrContinue:
 beq stateHand ItemEmpty GoActivate
