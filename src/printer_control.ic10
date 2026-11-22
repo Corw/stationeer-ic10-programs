@@ -11,6 +11,7 @@ alias state r15
 define state_idle 0
 define state_active 1
 
+clr printer
 start:
 yield
 l value numpad Setting
@@ -35,8 +36,7 @@ move instruction PrinterInstruction.ExecuteRecipe
 ins instruction value 8 8
 ins instruction recipe 16 32
 
-put printer 0 PrinterInstruction.WaitUntilNextValid
-put printer 1 instruction
+put printer 0 instruction
 
 s numpad Setting 1
 j start
