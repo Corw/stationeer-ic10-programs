@@ -8,8 +8,6 @@ alias Downtime r2
 alias Position r3
 alias ScanPower r4
 alias Dish d0
-sbn -851746783 HASH("ContactHorizontal") Setting -1
-sbn -851746783 HASH("ContactVertical") Setting -1
 main:
   s Dish On 1
   lbn Contact -851746783 HASH("ContactSetting") Setting Average
@@ -94,16 +92,16 @@ resolve:
   breqz r15 -2
   lbn r15 -851746783 HASH("SignalTimeoutSetting") Setting Average
   sleep r15
-  l r15 Dish SignalID
-  bltz r15 scan
+  l r5 Dish SignalID
+  bltz r5 scan
   l r15 Dish SignalStrength
   bltz r15 ra
   ble r15 TargetSignalStrength acquired
   j lock
 measure:
   yield
-  l r15 Dish SignalID
-  bltz r15 scan
+  l r5 Dish SignalID
+  bltz r5 scan
   l r15 Dish SignalStrength
   bltz r15 measure
   ble r15 TargetSignalStrength acquired
@@ -116,13 +114,15 @@ acquired:
   l r15 Dish Vertical
   round r15 r15
   sbn -851746783 HASH("ContactVertical") Setting r15
+  sbn -851746783 HASH("ContactSignalID") Setting r5
   yield
-  l r15 Dish SignalID
-  brgez r15 -2
+  l r5 Dish SignalID
+  brgez r5 -2
   s Dish Setting 0
   s Dish Vertical 0
   s Dish Horizontal 0
   sbn -851746783 HASH("ContactHorizontal") Setting -1
   sbn -851746783 HASH("ContactVertical") Setting -1
+  sbn -851746783 HASH("ContactSignalID") Setting -1
   sleep Downtime  
   j main
