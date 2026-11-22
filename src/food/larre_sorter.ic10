@@ -2,12 +2,17 @@ define export 1957571043
 define target 255
 define max_index 14
 alias hand d0
+alias chute d1
 alias value r15
 alias position r14
 alias index r13
 j move_home
 start:
 yield
+# empty chute
+ls value chute 0 Occupied
+select value value 0 1
+s chute Open value
 move index 0
 s hand TargetSlotIndex index
 lb value export Open Maximum
