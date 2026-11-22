@@ -1,0 +1,24 @@
+alias intake d0
+alias seeds d1
+alias stacker d2
+
+alias intakeOccupied r0
+alias intakeOpen r1
+alias seedOccupied r2
+alias stackerOccupied r3
+
+Start:
+yield
+
+ls intakeOccupied intake 0 Occupied
+ls seedOccupied seeds 0 Occupied
+ls stackerOccupied stacker 2 Occupied
+
+select intakeOpen intakeOccupied 0 1
+s intake Open intakeOpen
+
+bgtz seedOccupied Start
+bltz stackerOccupied Start
+s stacker Activate 1
+	
+j Start
