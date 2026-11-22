@@ -38,6 +38,8 @@ slot_loop:
   beqz value empty_hand
   add index index 1
   ble index max_index slot_loop
+  # all slots full, drop to discard bin
+  s hand TargetSlotIndex 0
   s hand Setting -1
   jal wait_idle  
 empty_hand:
