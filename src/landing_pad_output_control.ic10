@@ -1,0 +1,33 @@
+define output_liquid -1788929869
+define output_gas -1100218307
+alias active_gas r0
+alias active_liquid r1
+alias value r2
+alias count r2
+
+start:
+yield
+
+move active_gas 0
+lb count output_gas PrefabHash Count
+breqz count 2
+lb active_gas output_gas On Maximum
+
+move active_liquid 0
+lb count output_liquid PrefabHash Count
+breqz count 2
+lb active_liquid output_liquid On Maximum
+
+or value active_gas active_liquid
+beqz value start
+
+lb value output_gas TotalMoles Maximum
+brgtz value 2
+sb output_gas On 0
+
+lb value output_liquid TotalMoles Maximum
+brgtz value 2
+sb output_liquid On 0
+
+j start
+
