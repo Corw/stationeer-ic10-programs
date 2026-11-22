@@ -1,28 +1,37 @@
-define COORD_RANGE 131044
+define COORD_RANGE 32942
+define SIGNAL_RANGE 10000
+define CONTACT_RANGE 329420000
 define INVALID 361
+
 alias Horizontal r0
 alias Vertical r1
 alias Contact r2
 alias value r3
-alias encodedContact r4
+alias encodedSignal r4
+alias SignalID r5
+alias encodedContact r6
 
 lbn Contact -851746783 HASH("ContactSetting") Setting Average
+lbn SignalID -851746783 HASH("ContactSignalID") Setting Average
 
 Start:
 yield
 move Horizontal INVALID
-move Vertical INVALID
+move Vertical 0
 
 lbn value -851746783 HASH("ContactHorizontal") Setting Average
 beq value -1 Encode
-move Horizontal value 
+move Horizontal value
 lbn Vertical -851746783 HASH("ContactVertical") Setting Average
 
 Encode:
 mul value Vertical 362
 add value value Horizontal
 
-mul encodedContact Contact COORD_RANGE
+mul encodedSignal SignalID COORD_RANGE
+add value value encodedSignal
+
+mul encodedContact Contact CONTACT_RANGE
 add value value encodedContact
 
 sbn -851746783 HASH("EncodedSetting") Setting r3
