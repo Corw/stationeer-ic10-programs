@@ -1,8 +1,5 @@
-alias harv d0
-alias endSetting d1
-alias memoryPosition d2
-alias memoryPlant d3
-alias memoryHand d4
+alias harv r5
+alias endSetting r6
 alias buff r0
 alias val r1
 alias selectedContainer r2
@@ -39,11 +36,13 @@ define ItemEmpty 0
 define ItemOccupied 100
 define ItemFull 200
 # initialization
+lb harv 85133079 ReferenceId Maximum
+lbn endSetting -851746783 HASH("End index") ReferenceId Maximum
+
 move result 0
 move statePosition 0
 move statePlant 0
 move stateHand 0
-
 Start:
 yield
 l CooEnd endSetting Setting
@@ -118,7 +117,7 @@ beq val 1 ra
 # check growth, under 5 it did not produce seed yet
 move statePlant PlantGrowing
 ls val harv Tray Growth
-blt val 5 ra
+blt val 6 ra
 
 ls val harv Tray Seeding
 select statePlant val PlantMatureSeed PlantMature
