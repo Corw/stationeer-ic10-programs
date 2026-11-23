@@ -1,3 +1,4 @@
+define MAX 255
 alias printer d0
 alias begin d1
 alias numpad d2
@@ -9,42 +10,76 @@ alias value r2
 alias instruction r3
 alias count r4
 alias state r15
+alias index r14
+alias batch r13
+alias prev r12
+alias job r11
 
 define state_idle 0
 define state_active 1
 
+reset:
 clr printer
 start:
 yield
+# show numpad setting on display
 l value numpad Setting
 s display Setting value
+move prev  state
 l state printer Activate
+
+# clear numpad setting when completing job
+seq value prev state
+bgtz value check_state # exit if state did not change
+seq value state state_active
+bgtz value check_state # exit if changed to active
+s numpad Setting 1
+
+check_state:
 beq state state_idle check_begin
 l value printer ExportCount
 sub value count value
 s countdown Setting value
+# guard against runaway job
+bltz value reset
 j start
 check_begin:
 # clear stacker
 ls value stacker 2 Occupied
-breqz value 3
+breqz value 5
 sleep 2 # give time for last item to stack
 s stacker Activate 1
+s begin Color Color.Green
 # check button press
 l value begin Activate
 beqz value start
+s begin Activate 0 # just in case
+s begin Color Color.Red
 l recipe printer RecipeHash
 l value numpad Setting
 select count value value 1
 
 s printer ClearMemory 1
 
-move instruction PrinterInstruction.ExecuteRecipe
-ins instruction count 8 8
-ins instruction recipe 16 32
+move index 0
+move job count
+batch_loop:
+ # don't go higher than highest instruction index
+  sgt value index 52
+  bnez value start
+  
+  sgt value job MAX
+  select batch value MAX job
+  sub job job batch
 
-put printer 0 PrinterInstruction.WaitUntilNextValid
-put printer 1 instruction
+  move instruction PrinterInstruction.ExecuteRecipe
+  ins instruction batch 8 8
+  ins instruction recipe 16 32
+  
+  put printer index PrinterInstruction.WaitUntilNextValid
+  add index index 1
+  put printer index instruction
+  add index index 1
+  bnez job batch_loop 
 
-s numpad Setting 1
 j start
