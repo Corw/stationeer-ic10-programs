@@ -8,7 +8,7 @@ alias stackerOccupied r3
 
 lb intake -850484480 ReferenceId Maximum
 lb seeds 1957571043 ReferenceId Maximum
-lb stacker 1585641623 ReferenceId Maximum
+lb stacker -2020231820 ReferenceId Maximum
 
 Start:
 yield
